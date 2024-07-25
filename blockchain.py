@@ -1,13 +1,13 @@
 import hashlib
 import json
 from time import time
-import requests  # type: ignore # Ditambahkan untuk fungsi resolve_conflicts
+import requests  # type: ignore
 
 class Blockchain:
     def __init__(self):
         self.chain = []
         self.current_transactions = []
-        self.nodes = set()  # Ditambahkan untuk menyimpan daftar node
+        self.nodes = set()
 
         # Buat genesis block
         self.new_block(previous_hash='1', proof=100)
@@ -16,7 +16,7 @@ class Blockchain:
         block = {
             'index': len(self.chain) + 1,
             'timestamp': time(),
-            'transactions': self.current_transactions,
+            'transactions': self.current_transactions.copy(),
             'proof': proof,
             'previous_hash': previous_hash or self.hash(self.chain[-1]),
         }
@@ -25,13 +25,20 @@ class Blockchain:
         self.chain.append(block)
         return block
 
-    def new_transaction(self, sender, recipient, amount):  # Diperbaiki dari new_transactions menjadi new_transaction
-        self.current_transactions.append({
+    def new_transaction(self, sender, recipient, amount):
+        transaction = {
             'sender': sender,
             'recipient': recipient,
             'amount': amount
-        })
+        }
 
+        # Tambahkan transaksi ke blok pertama yang belum penuh
+        for block in self.chain:
+            if len(block['transactions']) < 10:  # Misalkan kita batasi setiap blok maksimum 10 transaksi
+                block['transactions'].append(transaction)
+                return block['index']
+
+        self.current_transactions.append(transaction)
         return self.last_block['index'] + 1
 
     @staticmethod

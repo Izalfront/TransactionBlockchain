@@ -1,11 +1,9 @@
 import hashlib
 import json
 from time import time
-from flask import Flask, jsonify, request # type: ignore
 from uuid import uuid4
-import requests # type: ignore
+from flask import Flask, jsonify, request
 from blockchain import Blockchain
-
 
 app = Flask(__name__)
 
@@ -20,13 +18,16 @@ def mine():
     last_proof = blockchain.last_block['proof']
     proof = blockchain.proof_of_work(last_proof)
 
+    # Miner receives reward for mining the block
     blockchain.new_transaction(
         sender="0",
         recipient=node_identifier,
         amount=1,
     )
 
-    block = blockchain.new_block(proof)
+    # Forge the new Block by adding it to the chain
+    previous_hash = blockchain.hash(blockchain.last_block)
+    block = blockchain.new_block(proof, previous_hash)
 
     response = {
         'message': "New Block Forged",
