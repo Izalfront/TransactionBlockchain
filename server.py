@@ -2,7 +2,7 @@ import hashlib
 import json
 from time import time
 from uuid import uuid4
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request # type: ignore
 from blockchain import Blockchain
 
 app = Flask(__name__)
@@ -40,16 +40,32 @@ def mine():
 
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
-    values = request.get_json()
+    try:
+        values = request.get_json()
+        print("Received values:", values)  # Debugging statement
 
-    required = ['sender', 'recipient', 'amount']
-    if not all(k in values for k in required):
-        return 'Missing values', 400
+        required = ['sender', 'recipient', 'amount']
+        if not all(k in values for k in required):
+            print("Missing values in request")  # Debugging statement
+            return 'Missing values', 400
+        
+          # Tambah transaksi
+        index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
 
-    index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
+        # Ambil saldo terkini untuk pengirim setelah transaksi
+        sender_balance = blockchain.balances.get(values['sender'], 0)
 
-    response = {'message': f'Transaction will be added to Block {index}'}
-    return jsonify(response), 201
+        index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
+        response = {'message': f'Transaction will be added to Block {index}',
+                    'total_transaction_amount': values['amount'],
+                    'remaining_balance': sender_balance
+                   }
+        return jsonify(response), 201
+
+    except Exception as e:
+        print("Error:", str(e))  # Debugging statement
+        return str(e), 500
+
 
 @app.route('/chain', methods=['GET'])
 def full_chain():
@@ -92,6 +108,16 @@ def consensus():
         }
 
     return jsonify(response), 200
+
+@app.route('/balance/<user>', methods=['GET'])
+def get_balance(user):
+    balance = blockchain.balances.get(user, 0)
+    response = {
+        'user': user,
+        'balance': balance
+    }
+    return jsonify(response), 200
+
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
