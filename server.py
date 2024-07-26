@@ -118,6 +118,10 @@ def get_balance(user):
     }
     return jsonify(response), 200
 
+@app.route('/balance/<address>', methods=['GET'])
+def get_balance(address):
+    balance = blockchain.balances.get(address, 0)
+    return jsonify({'address': address, 'balance': balance}), 200
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
