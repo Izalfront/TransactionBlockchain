@@ -1,20 +1,18 @@
 import hashlib
 import json
-import hashlib
 import logging
 import unittest
+import binascii
 import requests  # type: ignore
-import ecdsa # type: ignore
-import base58 # type: ignore
+import ecdsa  # type: ignore
+import base58  # type: ignore
 from time import time
 from uuid import uuid4
 from flask import Flask, jsonify, request  # type: ignore
-from flask_limiter import Limiter # type: ignore
-from flask_limiter.util import get_remote_address # type: ignore
-from cryptography.hazmat.primitives.asymmetric import rsa # type: ignore
-from cryptography.hazmat.primitives import serialization # type: ignore
-
-# welcome back guys :)
+from flask_limiter import Limiter  # type: ignore
+from flask_limiter.util import get_remote_address  # type: ignore
+from cryptography.hazmat.primitives.asymmetric import rsa  # type: ignore
+from cryptography.hazmat.primitives import serialization  # type: ignore
 
 # Konfigurasi logging
 logging.basicConfig(filename='blockchain.log', level=logging.INFO)
@@ -26,19 +24,20 @@ class InsufficientFundsError(Exception):
 class InvalidTransactionError(Exception):
     pass
 
+class InvalidSignatureError(Exception):
+    pass
+
 # Fungsi untuk membuat tanda tangan
 def create_signature(private_key, message):
-    sk = ecdsa.SigningKey.from_string(private_key.encode(), curve=ecdsa.SECP256k1)
+    sk = ecdsa.SigningKey.from_string(binascii.unhexlify(private_key), curve=ecdsa.SECP256k1)
     signature = sk.sign(message.encode())
-    return base58.b58encode(signature).decode()
+    return binascii.hexlify(signature).decode()
 
-# Fungsi untuk memverifikasi tanda tangan
 def verify_signature(public_key, message, signature):
-    vk = ecdsa.VerifyingKey.from_string(public_key.encode(), curve=ecdsa.SECP256k1)
     try:
-        vk.verify(base58.b58decode(signature.encode()), message.encode())
-        return True
-    except ecdsa.BadSignatureError:
+        vk = ecdsa.VerifyingKey.from_string(binascii.unhexlify(public_key), curve=ecdsa.SECP256k1)
+        return vk.verify(binascii.unhexlify(signature), message.encode())
+    except:
         return False
 
 class KeyManager:
@@ -57,24 +56,24 @@ class KeyManager:
             encoding=serialization.Encoding.PEM,
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
-    
+
 class SmartContract:
     def __init__(self, code):
         self.code = code
 
     def execute(self, blockchain, transaction):
-        # Ini adalah implementasi yang sangat sederhana dan tidak aman coy
+        # Ini adalah implementasi yang sangat sederhana dan tidak aman
         local_vars = {'blockchain': blockchain, 'transaction': transaction}
         exec(self.code, {}, local_vars)
         return local_vars.get('result', None)
-    
+
 class Blockchain:
     def __init__(self):
         self.chain = []
         self.current_transactions = []
         self.nodes = set()
         self.balances = {}  # Menyimpan saldo pengguna
-        self.node_identifier = '0xf80001110110' # alamat miner 0xf itu code ethereum ini example aja
+        self.node_identifier = '0xf80001110110'  # alamat miner
         self.initial_supply = 21000000  # Misalkan supply maksimum
         self.supply = 1000  # Supply saat ini
         self.mempool = []
@@ -96,7 +95,7 @@ class Blockchain:
         transactions = self.mempool[:max_transactions]
         self.mempool = self.mempool[max_transactions:]
         return transactions
-    
+
     # Halving genesis block
     def get_block_reward(self):
         halving_interval = 210000
@@ -110,7 +109,7 @@ class Blockchain:
             self.pruned_blocks[pruned_block['index']] = self.hash(pruned_block)
             return True
         return False
-    
+
     def deploy_contract(self, address, code):
         self.contracts[address] = SmartContract(code)
 
@@ -118,7 +117,7 @@ class Blockchain:
         if address in self.contracts:
             return self.contracts[address].execute(self, transaction)
         return None
-    
+
     def new_block(self, proof, previous_hash=None):
         # transaksi Coinbase sebelum transaksi yang ada
         transactions = [
@@ -130,7 +129,7 @@ class Blockchain:
         ] + self.current_transactions
 
         transactions = self.get_transactions_from_mempool() + self.current_transactions
-    
+
         block = {
             'index': len(self.chain) + 1,
             'timestamp': time(),
@@ -148,7 +147,6 @@ class Blockchain:
             raise Exception("Total supply exceeded the maximum limit")
 
         # Update balances
-
         for transaction in transactions:
             sender, recipient, amount = transaction['sender'], transaction['recipient'], transaction['amount']
             if sender != '0':
@@ -165,10 +163,6 @@ class Blockchain:
     def new_transaction(self, sender, recipient, amount, private_key, signature):
         if sender != '0' and (sender not in self.balances or self.balances[sender] < amount):
             raise InsufficientFundsError("Insufficient funds")
-        
-        message = f'{sender}{recipient}{amount}'
-        if not verify_signature(sender, message, signature):
-            raise InvalidSignatureError("Invalid signature") # type: ignore
 
         transaction = {
             'sender': sender,
@@ -177,6 +171,13 @@ class Blockchain:
             'timestamp': time(),
             'nonce': uuid4().hex
         }
+
+        message = f'{sender}{recipient}{amount}'
+        if not verify_signature(sender, message, signature):
+            raise InvalidSignatureError("Invalid signature")
+
+        if self.balances.get(sender, 0) < amount:
+            raise InsufficientFundsError("Insufficient funds")
 
         if not self.validate_transaction(transaction):
             raise InvalidTransactionError("Invalid transaction")
@@ -194,7 +195,7 @@ class Blockchain:
         return block['index'] == len(self.chain) + 1 and \
                block['previous_hash'] == self.hash(self.chain[-1]) and \
                self.valid_proof(self.chain[-1]['proof'], block['proof'])
-    
+
     @staticmethod
     def merkle_root(transactions):
         if not transactions:
@@ -252,6 +253,7 @@ class Blockchain:
     def resolve_conflicts(self):
         neighbours = self.nodes
         new_chain = None
+
         max_length = len(self.chain)
 
         for node in neighbours:
@@ -259,6 +261,7 @@ class Blockchain:
             if response.status_code == 200:
                 length = response.json()['length']
                 chain = response.json()['chain']
+
                 if length > max_length and self.valid_chain(chain):
                     max_length = length
                     new_chain = chain
@@ -266,28 +269,42 @@ class Blockchain:
         if new_chain:
             self.chain = new_chain
             return True
+
         return False
 
-# Flask API
+    def register_node(self, address):
+        self.nodes.add(address)
+
+    def consensus_algorithm(self):
+        replaced = self.resolve_conflicts()
+        if replaced:
+            logging.info("Our chain was replaced")
+        else:
+            logging.info("Our chain is authoritative")
+
+# Node setup
 app = Flask(__name__)
-limiter = Limiter(app, key_func=get_remote_address)
+limiter = Limiter(get_remote_address, app=app)
+
 node_identifier = str(uuid4()).replace('-', '')
+
 blockchain = Blockchain()
 
 @app.route('/mine', methods=['GET'])
 def mine():
-    last_proof = blockchain.last_block['proof']
+    last_block = blockchain.last_block
+    last_proof = last_block['proof']
     proof = blockchain.proof_of_work(last_proof)
 
     blockchain.new_transaction(
         sender="0",
         recipient=node_identifier,
-        amount=10,
-        private_key='',
+        amount=1,
+        private_key='', 
         signature=''
     )
 
-    previous_hash = blockchain.hash(blockchain.last_block)
+    previous_hash = blockchain.hash(last_block)
     block = blockchain.new_block(proof, previous_hash)
 
     response = {
@@ -302,28 +319,15 @@ def mine():
 @app.route('/transactions/new', methods=['POST'])
 @limiter.limit("5 per minute")
 def new_transaction():
-    try:
-        values = request.get_json()
-        required = ['sender', 'recipient', 'amount', 'private_key', 'signature']
-        if not all(k in values for k in required):
-            return 'Missing values', 400
+    values = request.get_json()
 
-        index = blockchain.new_transaction(
-            values['sender'],
-            values['recipient'],
-            values['amount'],
-            values['private_key'],
-            values['signature']
-        )
+    required = ['sender', 'recipient', 'amount', 'private_key', 'signature']
+    if not all(k in values for k in required):
+        return 'Missing values', 400
 
-        response = {'message': f'Transaction will be added to Block {index}'}
-        return jsonify(response), 201
-
-    except (InsufficientFundsError, InvalidTransactionError, InvalidSignatureError) as e: # type: ignore
-        return str(e), 400
-    except Exception as e:
-        logging.error(f"Error in new_transaction: {str(e)}")
-        return 'Internal Server Error', 500
+    index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'], values['private_key'], values['signature'])
+    response = {'message': f'Transaction will be added to Block {index}'}
+    return jsonify(response), 201
 
 @app.route('/chain', methods=['GET'])
 def full_chain():
@@ -334,14 +338,16 @@ def full_chain():
     return jsonify(response), 200
 
 @app.route('/nodes/register', methods=['POST'])
+@limiter.limit("5 per minute")
 def register_nodes():
     values = request.get_json()
+
     nodes = values.get('nodes')
     if nodes is None:
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        blockchain.nodes.add(node)
+        blockchain.register_node(node)
 
     response = {
         'message': 'New nodes have been added',
@@ -350,8 +356,10 @@ def register_nodes():
     return jsonify(response), 201
 
 @app.route('/nodes/resolve', methods=['GET'])
+@limiter.limit("5 per minute")
 def consensus():
     replaced = blockchain.resolve_conflicts()
+
     if replaced:
         response = {
             'message': 'Our chain was replaced',
@@ -362,30 +370,8 @@ def consensus():
             'message': 'Our chain is authoritative',
             'chain': blockchain.chain
         }
+
     return jsonify(response), 200
 
-@app.route('/balance/<address>', methods=['GET'])
-def get_balance(address):
-    balance = blockchain.balances.get(address, 0)
-    return jsonify({'address': address, 'balance': balance}), 200
-
 if __name__ == '__main__':
-    from argparse import ArgumentParser
-
-    blockchain.initialize_balances()
-
-    parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
-    args = parser.parse_args()
-
-    app.run(host='0.0.0.0', port=args.port)
-
-# Unit Tests
-class TestBlockchain(unittest.TestCase):
-    def setUp(self):
-        self.blockchain = Blockchain()
-
-    def test_new_block(self):
-        initial_length = len(self.blockchain.chain)
-        self.blockchain.new_block(proof=100)
-        self.assertEqual(len(self.blockchain.chain), initial_length + 1)
+    app.run(host='0.0.0.0', port=5000)
