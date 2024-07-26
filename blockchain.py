@@ -37,7 +37,8 @@ def verify_signature(public_key, message, signature):
     try:
         vk = ecdsa.VerifyingKey.from_string(binascii.unhexlify(public_key), curve=ecdsa.SECP256k1)
         return vk.verify(binascii.unhexlify(signature), message.encode())
-    except:
+    except Exception as e:
+        print(f"Verification error: {e}")
         return False
 
 class KeyManager:
@@ -73,6 +74,7 @@ class Blockchain:
         self.current_transactions = []
         self.nodes = set()
         self.balances = {}  # Menyimpan saldo pengguna
+        self.public_keys = {}  # Menyimpan kunci publik pengguna
         self.node_identifier = '0xf80001110110'  # alamat miner
         self.initial_supply = 21000000  # Misalkan supply maksimum
         self.supply = 1000  # Supply saat ini
@@ -88,38 +90,12 @@ class Blockchain:
         self.balances['user1'] = 1000
         self.balances['user2'] = 500
 
-    def add_to_mempool(self, transaction):
-        self.mempool.append(transaction)
-
-    def get_transactions_from_mempool(self, max_transactions=10):
-        transactions = self.mempool[:max_transactions]
-        self.mempool = self.mempool[max_transactions:]
-        return transactions
-
-    # Halving genesis block
-    def get_block_reward(self):
-        halving_interval = 210000
-        reward = 50
-        halvings = len(self.chain) / halving_interval
-        return reward / (2 ** halvings)
-
-    def prune(self, block_height):
-        if block_height <= len(self.chain) - 100:  # Simpan 100 blok terakhir
-            pruned_block = self.chain.pop(0)
-            self.pruned_blocks[pruned_block['index']] = self.hash(pruned_block)
-            return True
-        return False
-
-    def deploy_contract(self, address, code):
-        self.contracts[address] = SmartContract(code)
-
-    def execute_contract(self, address, transaction):
-        if address in self.contracts:
-            return self.contracts[address].execute(self, transaction)
-        return None
+    def prune(self, index):
+        if index < len(self.chain):
+            self.chain = self.chain[:index + 1]
+            logging.info(f"Pruned blockchain to index {index}")
 
     def new_block(self, proof, previous_hash=None):
-        # transaksi Coinbase sebelum transaksi yang ada
         transactions = [
             {
                 'sender': '0',  # Penanda untuk transaksi Coinbase
@@ -127,8 +103,6 @@ class Blockchain:
                 'amount': 10,   # Hadiah blok, misalnya 10 unit cryptocurrency
             }
         ] + self.current_transactions
-
-        transactions = self.get_transactions_from_mempool() + self.current_transactions
 
         block = {
             'index': len(self.chain) + 1,
@@ -158,11 +132,15 @@ class Blockchain:
             self.balances[recipient] += amount
 
         self.prune(len(self.chain) - 1)
-        return block
-
-    def new_transaction(self, sender, recipient, amount, private_key, signature):
+        return block    
+    
+    def new_transaction(self, sender, recipient, amount): # tidak menggunakan ini untuk sementara( private_key, signature, public_key=None)
         if sender != '0' and (sender not in self.balances or self.balances[sender] < amount):
             raise InsufficientFundsError("Insufficient funds")
+
+        # Simpan kunci publik jika belum ada
+        # if sender not in self.public_keys and public_key:
+        #     self.public_keys[sender] = public_key
 
         transaction = {
             'sender': sender,
@@ -172,12 +150,9 @@ class Blockchain:
             'nonce': uuid4().hex
         }
 
-        message = f'{sender}{recipient}{amount}'
-        if not verify_signature(sender, message, signature):
-            raise InvalidSignatureError("Invalid signature")
-
-        if self.balances.get(sender, 0) < amount:
-            raise InsufficientFundsError("Insufficient funds")
+        # message = f'{sender}{recipient}{amount}'
+        # if not verify_signature(self.public_keys.get(sender, ''), message, signature):
+        #     raise InvalidSignatureError("Invalid signature")
 
         if not self.validate_transaction(transaction):
             raise InvalidTransactionError("Invalid transaction")
@@ -195,7 +170,7 @@ class Blockchain:
         return block['index'] == len(self.chain) + 1 and \
                block['previous_hash'] == self.hash(self.chain[-1]) and \
                self.valid_proof(self.chain[-1]['proof'], block['proof'])
-
+    
     @staticmethod
     def merkle_root(transactions):
         if not transactions:
@@ -208,8 +183,8 @@ class Blockchain:
         return hashlib.sha256(f'{left}{right}'.encode()).hexdigest()
 
     def initialize_balances(self):
-        self.new_transaction(sender='0', recipient='user1', amount=1000, private_key='', signature='')
-        self.new_transaction(sender='0', recipient='user2', amount=500, private_key='', signature='')
+        self.new_transaction(sender='0', recipient='user1', amount=1000) #private_key='', signature=''
+        self.new_transaction(sender='0', recipient='user2', amount=500) #private_key='', signature=''
         last_proof = self.last_block['proof']
         proof = self.proof_of_work(last_proof)
         self.new_block(proof)
@@ -292,40 +267,56 @@ blockchain = Blockchain()
 
 @app.route('/mine', methods=['GET'])
 def mine():
-    last_block = blockchain.last_block
-    last_proof = last_block['proof']
-    proof = blockchain.proof_of_work(last_proof)
+    logging.info('Mining endpoint called')
+    try:
+        last_block = blockchain.last_block
+        last_proof = last_block['proof']
+        proof = blockchain.proof_of_work(last_proof)
 
-    blockchain.new_transaction(
-        sender="0",
-        recipient=node_identifier,
-        amount=1,
-        private_key='', 
-        signature=''
-    )
+        private_key = ''  
+        signature = ''  
+        
+        blockchain.new_transaction(
+            sender="0",
+            recipient=node_identifier,
+            amount=1,
+            # private_key=private_key, 
+            # signature=signature
+        )
 
-    previous_hash = blockchain.hash(last_block)
-    block = blockchain.new_block(proof, previous_hash)
+        previous_hash = blockchain.hash(last_block)
+        block = blockchain.new_block(proof, previous_hash)
 
-    response = {
-        'message': "New Block Forged",
-        'index': block['index'],
-        'transactions': block['transactions'],
-        'proof': block['proof'],
-        'previous_hash': block['previous_hash'],
-    }
-    return jsonify(response), 200
+        response = {
+            'message': "New Block Forged",
+            'index': block['index'],
+            'transactions': block['transactions'],
+            'proof': block['proof'],
+            'previous_hash': block['previous_hash'],
+        }
+        logging.info(f'Mining successful: {response}')
+        return jsonify(response), 200
+    except Exception as e:
+        logging.error(f'Error during mining: {e}')
+        return jsonify({'message': 'Internal server error'}), 500
 
 @app.route('/transactions/new', methods=['POST'])
 @limiter.limit("5 per minute")
 def new_transaction():
     values = request.get_json()
 
-    required = ['sender', 'recipient', 'amount', 'private_key', 'signature']
+    required = ['sender', 'recipient', 'amount'] #'private_key', 'signature', 'public_key'
     if not all(k in values for k in required):
         return 'Missing values', 400
 
-    index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'], values['private_key'], values['signature'])
+    index = blockchain.new_transaction(
+        values['sender'],
+        values['recipient'],
+        values['amount'],
+        # values['private_key'],
+        # values['signature'],
+        # values['public_key']
+    )
     response = {'message': f'Transaction will be added to Block {index}'}
     return jsonify(response), 201
 
