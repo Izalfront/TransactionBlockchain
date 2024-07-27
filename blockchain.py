@@ -81,6 +81,9 @@ class Blockchain:
         self.mempool = []
         self.pruned_blocks = {}
         self.contracts = {}
+        self.current_block = None
+        self.create_new_block(previous_hash='1', proof=100)
+        self.max_transactions_per_block = 5
 
         # Buat genesis block
         self.new_block(previous_hash='1', proof=100)
@@ -95,7 +98,23 @@ class Blockchain:
             self.chain = self.chain[:index + 1]
             logging.info(f"Pruned blockchain to index {index}")
 
+    def create_new_block(self, proof, previous_hash=None):
+        block = {
+            'index': len(self.chain) + 1,
+            'timestamp': time(),
+            'transactions': [],
+            'proof': proof,
+            'previous_hash': previous_hash or self.hash(self.chain[-1]),
+            'merkle_root': None
+        }
+        self.current_block = block
+        return block
+    
     def new_block(self, proof, previous_hash=None):
+        # Finalisasi blok saat ini
+        self.current_block['merkle_root'] = self.merkle_root(self.current_block['transactions'])
+        self.chain.append(self.current_block)
+
         transactions = [
             {
                 'sender': '0',  # Penanda untuk transaksi Coinbase
@@ -156,6 +175,20 @@ class Blockchain:
 
         if not self.validate_transaction(transaction):
             raise InvalidTransactionError("Invalid transaction")
+
+        # Tambahkan transaksi ke blok saat ini jika masih ada ruang
+        if len(self.current_block['transactions']) < self.max_transactions_per_block:
+            self.current_block['transactions'].append(transaction)
+        else:
+            # Jika blok saat ini penuh, cari blok yang belum penuh
+            for block in reversed(self.chain):
+                if len(block['transactions']) < self.max_transactions_per_block:
+                    block['transactions'].append(transaction)
+                    block['merkle_root'] = self.merkle_root(block['transactions'])
+                    return block['index']
+
+            # Jika semua blok penuh, tambahkan ke mempool
+            self.mempool.append(transaction)
 
         self.current_transactions.append(transaction)
         logging.info(f"New transaction: {transaction}")
@@ -278,8 +311,8 @@ def mine():
         
         blockchain.new_transaction(
             sender="0",
-            recipient=node_identifier,
-            amount=1,
+            recipient=blockchain.node_identifier,
+            amount=10,
             # private_key=private_key, 
             # signature=signature
         )
