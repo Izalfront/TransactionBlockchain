@@ -1,101 +1,108 @@
-INFO:root:Pruned blockchain to index 0
-INFO:root:Pruned blockchain to index 0
-WARNING:werkzeug: * Running on all addresses.
-   WARNING: This is a development server. Do not use it in a production deployment.
-INFO:werkzeug: * Running on http://192.168.100.186:5000/ (Press CTRL+C to quit)
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:18:24] "GET /chain HTTP/1.1" 200 -
-INFO:root:Mining endpoint called
-INFO:root:New transaction: {'sender': '0', 'recipient': '2cfd476dcf6d452ca1dfbab42655b0bf', 'amount': 1, 'timestamp': 1722064708.8571246, 'nonce': 'e361c8e3ef5f4f5e949fa2294ba71c23'}
-INFO:root:Pruned blockchain to index 1
-INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 2, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}, {'sender': '0', 'recipient': '2cfd476dcf6d452ca1dfbab42655b0bf', 'amount': 1, 'timestamp': 1722064708.8571246, 'nonce': 'e361c8e3ef5f4f5e949fa2294ba71c23'}], 'proof': 35293, 'previous_hash': '036c2c48960851dc267e58c9486543136469b7b845d0839bd31f00fd6aa1be6e'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:18:28] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722064713.7717705, 'nonce': 'b473cd7d81624fcc91026c64eaa21265'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:18:33] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722064714.9054832, 'nonce': 'bdcccb9107724dfa9687cfa7c97e40bd'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:18:34] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722064715.7697668, 'nonce': '7950a6f270ba416386e6b6ebf4660a68'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:18:35] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:Mining endpoint called
-INFO:root:New transaction: {'sender': '0', 'recipient': '2cfd476dcf6d452ca1dfbab42655b0bf', 'amount': 1, 'timestamp': 1722064719.053856, 'nonce': '7e3f0b02d84448a68d2c5032ef307af0'}
-INFO:root:Pruned blockchain to index 2
-INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 3, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722064713.7717705, 'nonce': 'b473cd7d81624fcc91026c64eaa21265'}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722064714.9054832, 'nonce': 'bdcccb9107724dfa9687cfa7c97e40bd'}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722064715.7697668, 'nonce': '7950a6f270ba416386e6b6ebf4660a68'}, {'sender': '0', 'recipient': '2cfd476dcf6d452ca1dfbab42655b0bf', 'amount': 1, 'timestamp': 1722064719.053856, 'nonce': '7e3f0b02d84448a68d2c5032ef307af0'}], 'proof': 35089, 'previous_hash': '62318e82f16c9bfc924a0937053c411f2af81af8f84f89f5bf6d8a7d075df496'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:18:39] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722064723.332926, 'nonce': 'f6650bbe914d4513b39c782ac31c1042'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:18:43] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:18:47] "GET /chain HTTP/1.1" 200 -
 INFO:root:Pruned blockchain to index 1
 INFO:root:Pruned blockchain to index 1
 WARNING:werkzeug: * Running on all addresses.
    WARNING: This is a development server. Do not use it in a production deployment.
 INFO:werkzeug: * Running on http://192.168.100.186:5000/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:35:33] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 500 -
 INFO:root:Pruned blockchain to index 1
 INFO:root:Pruned blockchain to index 1
 WARNING:werkzeug: * Running on all addresses.
    WARNING: This is a development server. Do not use it in a production deployment.
 INFO:werkzeug: * Running on http://192.168.100.186:5000/ (Press CTRL+C to quit)
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065441.670659, 'nonce': '5195d0d9233b4348a0c71154341c1fb3'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:30:41] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065442.9774427, 'nonce': 'd881b80bdfd34465b46094baf12aeaff'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:30:42] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065443.8816414, 'nonce': '4d969dfacc0d4797890eda2e7effc8db'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:30:43] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065444.7019758, 'nonce': 'd5dadd4dfcf84fe79d815c1511b599ce'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:30:44] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:30:47] "GET /chain HTTP/1.1" 200 -
+INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069352.6508148, 'nonce': 'a314f64402cc4fc8af751b3fdd23944e'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:35:52] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069355.210912, 'nonce': '339c0af17e514124a8b7fd843f1044af'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:35:55] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
 INFO:root:Mining endpoint called
-INFO:root:New transaction: {'sender': '0', 'recipient': '7b307d4c3e0748adb5b7beafe58d56ae', 'amount': 1, 'timestamp': 1722065453.0582507, 'nonce': '1c4bbd71106c4de599111bf85c6596a5'}
+INFO:root:New transaction: {'sender': '0', 'recipient': '1618560267f44be09e47605d76221629', 'amount': 1, 'timestamp': 1722069358.08408, 'nonce': '89a751d5460e4496ac443daa5d9e28d0'}
 INFO:root:Pruned blockchain to index 3
-INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 4, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065441.670659, 'nonce': '5195d0d9233b4348a0c71154341c1fb3'}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065442.9774427, 'nonce': 'd881b80bdfd34465b46094baf12aeaff'}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065443.8816414, 'nonce': '4d969dfacc0d4797890eda2e7effc8db'}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065444.7019758, 'nonce': 'd5dadd4dfcf84fe79d815c1511b599ce'}, {'sender': '0', 'recipient': '7b307d4c3e0748adb5b7beafe58d56ae', 'amount': 1, 'timestamp': 1722065453.0582507, 'nonce': '1c4bbd71106c4de599111bf85c6596a5'}], 'proof': 35293, 'previous_hash': '6bb2c17175c615c6d2bf0e333616b38f174cb9faa68082399ff6701ee4c2b19f'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:30:53] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065456.3052037, 'nonce': '04f84d33bc564ef49bb28474b356efc9'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:30:56] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065458.2028925, 'nonce': '5d1f30ddbc444fa4b3b392a7d84e0fee'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:30:58] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065463.1426861, 'nonce': '28b5c3c79c954200916824cd0bba7699'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:31:03] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065463.8850548, 'nonce': '7ac5aee06e9d43d9a42e45bf00d643af'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:31:03] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065464.2250485, 'nonce': '81e3dad7cb7a43c791a92dc5c7f96ff7'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:31:04] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:Pruned blockchain to index 1
-INFO:root:Pruned blockchain to index 1
-WARNING:werkzeug: * Running on all addresses.
-   WARNING: This is a development server. Do not use it in a production deployment.
-INFO:werkzeug: * Running on http://192.168.100.186:5000/ (Press CTRL+C to quit)
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:32:40] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 500 -
-INFO:root:Pruned blockchain to index 1
-INFO:root:Pruned blockchain to index 1
-WARNING:werkzeug: * Running on all addresses.
-   WARNING: This is a development server. Do not use it in a production deployment.
-INFO:werkzeug: * Running on http://192.168.100.186:5000/ (Press CTRL+C to quit)
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065666.416332, 'nonce': '1233ab1efa0a4152964da70f0290926e'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:26] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065668.1372385, 'nonce': '5eee8f7cc65746cebdabd3e6ba759b30'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:28] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065670.6419713, 'nonce': '1d2d7e74291940aebe15a952eabd50ee'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:30] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065671.3983104, 'nonce': 'f386a6c1d1b24c29a58598f50194cc7a'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:31] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065672.058287, 'nonce': 'dc545f7e0acd4abfb66120072d4c5b1a'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:32] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 4, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069352.6508148, 'nonce': 'a314f64402cc4fc8af751b3fdd23944e'}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069355.210912, 'nonce': '339c0af17e514124a8b7fd843f1044af'}, {'sender': '0', 'recipient': '1618560267f44be09e47605d76221629', 'amount': 1, 'timestamp': 1722069358.08408, 'nonce': '89a751d5460e4496ac443daa5d9e28d0'}], 'proof': 35293, 'previous_hash': '82a2106e8165bf9be6c45e376783192784474986d33e77d40d44d0f92de553b6'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:35:58] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
+INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069361.912177, 'nonce': '361a772704e44990be3dbabdb6c80b69'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:36:01] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:36:06] "GET /chain HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:36:17] "GET /balance/user2 HTTP/1.1" 200 -
 INFO:root:Mining endpoint called
+INFO:root:New transaction: {'sender': '0', 'recipient': '1618560267f44be09e47605d76221629', 'amount': 1, 'timestamp': 1722069381.095049, 'nonce': 'db2273e04b25440d9939110701042681'}
+INFO:root:Pruned blockchain to index 5
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 6, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069361.912177, 'nonce': '361a772704e44990be3dbabdb6c80b69'}, {'sender': '0', 'recipient': '1618560267f44be09e47605d76221629', 'amount': 1, 'timestamp': 1722069381.095049, 'nonce': 'db2273e04b25440d9939110701042681'}], 'proof': 35089, 'previous_hash': '67480d6ccbb36d050dffc4183cf824881d9cccad40713c6a130da6df0f7fd57e'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:36:21] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:36:24] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:36:26] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:root:Mining endpoint called
+INFO:root:Pruned blockchain to index 7
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 8, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}], 'proof': 119678, 'previous_hash': '7c36232ca6422316e873094f6da94b5b87cc3bc3b573a2443762f520920d38af'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:36:29] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:Pruned blockchain to index 9
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 10, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}], 'proof': 146502, 'previous_hash': '7a0aea2785ebcc22450b0ada633c8c529767129a233a222f20eab72b806783bf'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:36:31] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:Pruned blockchain to index 11
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 12, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}], 'proof': 43538, 'previous_hash': 'fd8f19a2679dcad49330b08f3bff17104abe0601e6cbf098840a167e91691552'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:36:32] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:Pruned blockchain to index 13
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 14, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}], 'proof': 85724, 'previous_hash': '6ec99a0d00ca8f93f88914de87c222be0c311c62dd102248233a36dede42b90a'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:36:33] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:36:36] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:36:41] "GET /chain HTTP/1.1" 200 -
+INFO:root:Pruned blockchain to index 1
+INFO:root:Pruned blockchain to index 1
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.186:5000/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:39:59] "GET /chain HTTP/1.1" 200 -
+INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069604.0217469, 'nonce': '00a5364e467d45bfbf71ff958ebffedc'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:40:04] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069606.323032, 'nonce': '5f3b145b163b46968befd0fff08ff142'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:40:06] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069607.598726, 'nonce': 'f693bc473b0c4a2e8b1d50b23b3d98e7'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:40:07] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: {'sender': '0', 'recipient': 'dc8ac11f93f342bd87672c1d1cda1797', 'amount': 1, 'timestamp': 1722069610.873063, 'nonce': '1c8feb38ebd84b4dbc7768ecf1a3f335'}
 INFO:root:Pruned blockchain to index 3
-INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 4, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065666.416332, 'nonce': '1233ab1efa0a4152964da70f0290926e'}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065668.1372385, 'nonce': '5eee8f7cc65746cebdabd3e6ba759b30'}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065670.6419713, 'nonce': '1d2d7e74291940aebe15a952eabd50ee'}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065671.3983104, 'nonce': 'f386a6c1d1b24c29a58598f50194cc7a'}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722065672.058287, 'nonce': 'dc545f7e0acd4abfb66120072d4c5b1a'}], 'proof': 35293, 'previous_hash': 'b1372c0ccda29c9014aa865374717c04520f323efad847e532800d1287f3715c'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:36] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:40] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:41] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 4, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069604.0217469, 'nonce': '00a5364e467d45bfbf71ff958ebffedc'}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069606.323032, 'nonce': '5f3b145b163b46968befd0fff08ff142'}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069607.598726, 'nonce': 'f693bc473b0c4a2e8b1d50b23b3d98e7'}, {'sender': '0', 'recipient': 'dc8ac11f93f342bd87672c1d1cda1797', 'amount': 1, 'timestamp': 1722069610.873063, 'nonce': '1c8feb38ebd84b4dbc7768ecf1a3f335'}], 'proof': 35293, 'previous_hash': '205dbc82d8afd07d1723588c9af4941de9a088dbe28395620af1aebd8c069a31'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:40:10] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
+INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069616.8863626, 'nonce': '70ca43ca68cb42bc93928894e5f4596a'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:40:16] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
 INFO:root:Mining endpoint called
 INFO:root:Pruned blockchain to index 5
-INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 6, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}], 'proof': 35089, 'previous_hash': 'a6d63e71e5061e058572cba734fa5bad0d4f1fd961e93273f6baad08e75b2f25'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:45] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:47] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:48] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:49] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:52] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:34:54] "GET /chain HTTP/1.1" 200 -
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 6, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069616.8863626, 'nonce': '70ca43ca68cb42bc93928894e5f4596a'}], 'proof': 35089, 'previous_hash': 'e1c250315d53e4ad6d4a3462930fc46f209f04dd206d3a8385424ca7c8620caa'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:40:23] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:40:30] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
 INFO:root:Mining endpoint called
-INFO:root:New transaction: {'sender': '0', 'recipient': 'dab133b6ee9343a7912f89f77645df25', 'amount': 1, 'timestamp': 1722065705.955911, 'nonce': '500ea36388b54c3ba8f76e20d4515329'}
 INFO:root:Pruned blockchain to index 7
-INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 8, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}, {'sender': '0', 'recipient': 'dab133b6ee9343a7912f89f77645df25', 'amount': 1, 'timestamp': 1722065705.955911, 'nonce': '500ea36388b54c3ba8f76e20d4515329'}], 'proof': 119678, 'previous_hash': 'e3be94e525515d22f563e7eac05d940b705689f535105040e01c64b87b92e9de'}
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:35:05] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 15:35:11] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 8, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}], 'proof': 119678, 'previous_hash': 'dd5508160b618540f67afe89293eb86bca4eabe531c71824df1a14960b911994'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:40:33] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:40:37] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:40:39] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:40:43] "GET /chain HTTP/1.1" 200 -
+INFO:root:Pruned blockchain to index 1
+INFO:root:Pruned blockchain to index 1
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.186:5000/ (Press CTRL+C to quit)
+INFO:root:Pruned blockchain to index 1
+INFO:root:Pruned blockchain to index 1
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.186:5000/ (Press CTRL+C to quit)
+INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069798.3042858, 'nonce': '84e3d8bd14d1483f878a48a43e97bb0c'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:43:18] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:43:21] "GET /chain HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: {'sender': '0', 'recipient': '3db5b682cb5b422f869352034305b48e', 'amount': 1, 'timestamp': 1722069807.9255412, 'nonce': '1b3cb86d74bc4801ace456b74c59598c'}
+INFO:root:Pruned blockchain to index 3
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 4, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069798.3042858, 'nonce': '84e3d8bd14d1483f878a48a43e97bb0c'}, {'sender': '0', 'recipient': '3db5b682cb5b422f869352034305b48e', 'amount': 1, 'timestamp': 1722069807.9255412, 'nonce': '1b3cb86d74bc4801ace456b74c59598c'}], 'proof': 35293, 'previous_hash': '1dbda17dcae8029167e16dee45be57080a9ae6d0a60cfd94e16ab195643bf8d3'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:43:27] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
+INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069811.1029854, 'nonce': 'ac0660676f07418abe03ed8483c5f58d'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:43:31] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: {'sender': '0', 'recipient': '3db5b682cb5b422f869352034305b48e', 'amount': 1, 'timestamp': 1722069815.5462217, 'nonce': '5d4a8e3801884bc094c31eb29b311cce'}
+INFO:root:Pruned blockchain to index 5
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 6, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}, {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069811.1029854, 'nonce': 'ac0660676f07418abe03ed8483c5f58d'}, {'sender': '0', 'recipient': '3db5b682cb5b422f869352034305b48e', 'amount': 1, 'timestamp': 1722069815.5462217, 'nonce': '5d4a8e3801884bc094c31eb29b311cce'}], 'proof': 35089, 'previous_hash': '06ddf6ddcab50722499e6e859199d7fcf64804d7dfb8d346e89a0f68d5696921'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:43:35] "GET /mine?appid={{vault:openweather-api-api-key:value}} HTTP/1.1" 200 -
+INFO:root:New transaction: {'sender': 'user1', 'recipient': 'user2', 'amount': 10, 'timestamp': 1722069818.071649, 'nonce': '5b1cb7c9dd79472296d35c044414b57d'}
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:43:38] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:werkzeug:127.0.0.1 - - [27/Jul/2024 16:43:41] "GET /balance/user2 HTTP/1.1" 200 -

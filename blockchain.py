@@ -111,6 +111,9 @@ class Blockchain:
         return block
     
     def new_block(self, proof, previous_hash=None):
+        if self.current_block is None or 'transactions' not in self.current_block:
+            raise ValueError("Current block is not properly initialized")
+    
         # Finalisasi blok saat ini
         self.current_block['merkle_root'] = self.merkle_root(self.current_block['transactions'])
         self.chain.append(self.current_block)
@@ -133,6 +136,7 @@ class Blockchain:
         }
 
         self.current_transactions = []
+        #self.current_block = None
         self.chain.append(block)
 
         self.supply += 10
@@ -140,26 +144,39 @@ class Blockchain:
             raise Exception("Total supply exceeded the maximum limit")
 
         # Update balances
-        for transaction in transactions:
-            sender, recipient, amount = transaction['sender'], transaction['recipient'], transaction['amount']
-            if sender != '0':
-                if sender not in self.balances or self.balances[sender] < amount:
-                    raise InsufficientFundsError(f"Sender {sender} has insufficient funds")
-                self.balances[sender] -= amount
-            if recipient not in self.balances:
-                self.balances[recipient] = 0
-            self.balances[recipient] += amount
+        # for transaction in transactions:
+        #     sender, recipient, amount = transaction['sender'], transaction['recipient'], transaction['amount']
+        #     if sender != '0':
+        #         if sender not in self.balances or self.balances[sender] < amount:
+        #             raise InsufficientFundsError(f"Sender {sender} has insufficient funds")
+        #         self.balances[sender] -= amount
+        #     if recipient not in self.balances:
+        #         self.balances[recipient] = 0
+        #     self.balances[recipient] += amount
 
         self.prune(len(self.chain) - 1)
         return block    
     
     def new_transaction(self, sender, recipient, amount): # tidak menggunakan ini untuk sementara( private_key, signature, public_key=None)
-        if sender != '0' and (sender not in self.balances or self.balances[sender] < amount):
-            raise InsufficientFundsError("Insufficient funds")
+        if sender != '0':  # Cek saldo hanya untuk transaksi non-Coinbase
+            if sender not in self.balances or self.balances[sender] < amount:
+                raise InsufficientFundsError(f"Sender {sender} has insufficient funds")
+            self.balances[sender] -= amount
 
         # Simpan kunci publik jika belum ada
         # if sender not in self.public_keys and public_key:
         #     self.public_keys[sender] = public_key
+
+        if recipient not in self.balances:
+            self.balances[recipient] = 0
+        self.balances[recipient] += amount
+        
+        # Tambahkan transaksi ke daftar transaksi saat ini
+        self.current_transactions.append({
+            'sender': sender,
+            'recipient': recipient,
+            'amount': amount
+        })
 
         transaction = {
             'sender': sender,
