@@ -157,11 +157,12 @@ class Blockchain:
         self.prune(len(self.chain) - 1)
         return block    
     
-    def new_transaction(self, sender, recipient, amount): # tidak menggunakan ini untuk sementara( private_key, signature, public_key=None)
+    def new_transaction(self, sender, recipient, amount, fee=5): # tidak menggunakan ini untuk sementara( private_key, signature, public_key=None)
         if sender != '0':  # Cek saldo hanya untuk transaksi non-Coinbase
-            if sender not in self.balances or self.balances[sender] < amount:
+            total_amount = amount + fee
+            if sender not in self.balances or self.balances[sender] < total_amount:
                 raise InsufficientFundsError(f"Sender {sender} has insufficient funds")
-            self.balances[sender] -= amount
+            self.balances[sender] -= total_amount
 
         # Simpan kunci publik jika belum ada
         # if sender not in self.public_keys and public_key:
@@ -170,6 +171,8 @@ class Blockchain:
         if recipient not in self.balances:
             self.balances[recipient] = 0
         self.balances[recipient] += amount
+
+        self.balances[self.node_identifier] += fee
         
         # Tambahkan transaksi ke daftar transaksi saat ini
         self.current_transactions.append({
@@ -182,6 +185,7 @@ class Blockchain:
             'sender': sender,
             'recipient': recipient,
             'amount': amount,
+            'fee': fee,
             'timestamp': time(),
             'nonce': uuid4().hex
         }
@@ -355,7 +359,7 @@ def mine():
 def new_transaction():
     values = request.get_json()
 
-    required = ['sender', 'recipient', 'amount'] #'private_key', 'signature', 'public_key'
+    required = ['sender', 'recipient', 'amount', 'fee'] #'private_key', 'signature', 'public_key'
     if not all(k in values for k in required):
         return 'Missing values', 400
 
@@ -363,6 +367,7 @@ def new_transaction():
         values['sender'],
         values['recipient'],
         values['amount'],
+        values['fee'],
         # values['private_key'],
         # values['signature'],
         # values['public_key']
