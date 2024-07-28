@@ -95,7 +95,8 @@ class Blockchain:
 
     def prune(self, index):
         if index < len(self.chain):
-            self.chain = self.chain[:index + 1]
+            self.pruned_blocks.update({block['index']: block for block in self.chain[:index]})
+            self.chain = self.chain[index:]
             logging.info(f"Pruned blockchain to index {index}")
 
     def create_new_block(self, proof, previous_hash=None):
@@ -112,7 +113,7 @@ class Blockchain:
     
     def new_block(self, proof, previous_hash=None):
         if self.current_block is None or 'transactions' not in self.current_block:
-            raise ValueError("Current block is not properly initialized")
+            self.create_new_block(proof, previous_hash)
     
         # Finalisasi blok saat ini
         self.current_block['merkle_root'] = self.merkle_root(self.current_block['transactions'])
@@ -136,37 +137,25 @@ class Blockchain:
         }
 
         self.current_transactions = []
-        #self.current_block = None
         self.chain.append(block)
 
         self.supply += 10
         if self.supply > self.initial_supply:
             raise Exception("Total supply exceeded the maximum limit")
 
-        # Update balances
-        # for transaction in transactions:
-        #     sender, recipient, amount = transaction['sender'], transaction['recipient'], transaction['amount']
-        #     if sender != '0':
-        #         if sender not in self.balances or self.balances[sender] < amount:
-        #             raise InsufficientFundsError(f"Sender {sender} has insufficient funds")
-        #         self.balances[sender] -= amount
-        #     if recipient not in self.balances:
-        #         self.balances[recipient] = 0
-        #     self.balances[recipient] += amount
-
-        self.prune(len(self.chain) - 1)
+        self.prune(len(self.chain) - 1) # Menyimpan 1000 blok terakhir
         return block    
     
-    def new_transaction(self, sender, recipient, amount, fee=5): # tidak menggunakan ini untuk sementara( private_key, signature, public_key=None)
-        if sender != '0':  # Cek saldo hanya untuk transaksi non-Coinbase
+    def new_transaction(self, sender, recipient, amount, private_key, signature, public_key=None, fee=5): # tidak menggunakan ini untuk sementara( private_key, signature, public_key=None)
+        if sender != '0':  
             total_amount = amount + fee
             if sender not in self.balances or self.balances[sender] < total_amount:
                 raise InsufficientFundsError(f"Sender {sender} has insufficient funds")
             self.balances[sender] -= total_amount
 
         # Simpan kunci publik jika belum ada
-        # if sender not in self.public_keys and public_key:
-        #     self.public_keys[sender] = public_key
+        if sender not in self.public_keys and public_key:
+            self.public_keys[sender] = public_key
 
         if recipient not in self.balances:
             self.balances[recipient] = 0
@@ -190,9 +179,9 @@ class Blockchain:
             'nonce': uuid4().hex
         }
 
-        # message = f'{sender}{recipient}{amount}'
-        # if not verify_signature(self.public_keys.get(sender, ''), message, signature):
-        #     raise InvalidSignatureError("Invalid signature")
+        message = f'{sender}{recipient}{amount}'
+        if not verify_signature(self.public_keys.get(sender, ''), message, signature):
+            raise InvalidSignatureError("Invalid signature")
 
         if not self.validate_transaction(transaction):
             raise InvalidTransactionError("Invalid transaction")
@@ -237,8 +226,8 @@ class Blockchain:
         return hashlib.sha256(f'{left}{right}'.encode()).hexdigest()
 
     def initialize_balances(self):
-        self.new_transaction(sender='0', recipient='user1', amount=1000) #private_key='', signature=''
-        self.new_transaction(sender='0', recipient='user2', amount=500) #private_key='', signature=''
+        self.new_transaction(sender='0', recipient='user1', amount=1000, private_key='', signature='') 
+        self.new_transaction(sender='0', recipient='user2', amount=500, private_key='', signature='') 
         last_proof = self.last_block['proof']
         proof = self.proof_of_work(last_proof)
         self.new_block(proof)
@@ -334,8 +323,8 @@ def mine():
             sender="0",
             recipient=blockchain.node_identifier,
             amount=10,
-            # private_key=private_key, 
-            # signature=signature
+            private_key=private_key, 
+            signature=signature
         )
 
         previous_hash = blockchain.hash(last_block)
@@ -359,21 +348,24 @@ def mine():
 def new_transaction():
     values = request.get_json()
 
-    required = ['sender', 'recipient', 'amount', 'fee'] #'private_key', 'signature', 'public_key'
+    required = ['sender', 'recipient', 'amount', 'fee', 'private_key', 'signature', 'public_key']
     if not all(k in values for k in required):
         return 'Missing values', 400
 
-    index = blockchain.new_transaction(
-        values['sender'],
-        values['recipient'],
-        values['amount'],
-        values['fee'],
-        # values['private_key'],
-        # values['signature'],
-        # values['public_key']
-    )
-    response = {'message': f'Transaction will be added to Block {index}'}
-    return jsonify(response), 201
+    try:
+        index = blockchain.new_transaction(
+            values['sender'],
+            values['recipient'],
+            values['amount'],
+            values['fee'],
+            values['private_key'],
+            values['signature'],
+            values['public_key']
+        )
+        response = {'message': f'Transaction will be added to Block {index}'}
+        return jsonify(response), 201
+    except (InsufficientFundsError, InvalidTransactionError, InvalidSignatureError) as e:
+        return jsonify({'error': str(e)}), 400
 
 @app.route('/chain', methods=['GET'])
 def full_chain():

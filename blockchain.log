@@ -176,3 +176,11 @@ INFO:root:Pruned blockchain to index 1
 WARNING:werkzeug: * Running on all addresses.
    WARNING: This is a development server. Do not use it in a production deployment.
 INFO:werkzeug: * Running on http://192.168.100.186:5000/ (Press CTRL+C to quit)
+INFO:root:Pruned blockchain to index 1
+INFO:root:Pruned blockchain to index 1
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.186:5000/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [28/Jul/2024 17:09:21] "GET /chain HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [28/Jul/2024 17:09:28] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [28/Jul/2024 17:12:11] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 500 -
