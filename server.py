@@ -63,7 +63,7 @@ def new_transaction():
         values = request.get_json()
         print("Received values:", values)  # Debugging statement
 
-        required = ['sender', 'recipient', 'amount'] #'public_key', 'signature'
+        required = ['sender', 'recipient', 'amount', 'public_key', 'signature'] #'public_key', 'signature'
         if not all(k in values for k in required):
             print("Missing values in request")  # Debugging statement
             return 'Missing values', 400
@@ -78,8 +78,9 @@ def new_transaction():
             values['sender'],
             values['recipient'],
             values['amount'],
-            # values['private_key'],
-            # values['signature']
+            values['public_key'],
+            values['private_key'],
+            values['signature']
         )
 
         # Dapatkan saldo terkini untuk pengirim setelah transaksi
@@ -140,9 +141,11 @@ def consensus():
 @app.route('/balance/<address>', methods=['GET'])
 def get_balance(address):
     balance = blockchain.balances.get(address, 0)
+    public_key = blockchain.public_keys.get(address, 'N/A')
     response = {
         'address': address,
-        'balance': balance
+        'balance': balance,
+        'public_key': public_key
     }
     return jsonify(response), 200
 

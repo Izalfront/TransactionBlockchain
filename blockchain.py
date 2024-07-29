@@ -13,6 +13,7 @@ from flask_limiter import Limiter  # type: ignore
 from flask_limiter.util import get_remote_address  # type: ignore
 from cryptography.hazmat.primitives.asymmetric import rsa  # type: ignore
 from cryptography.hazmat.primitives import serialization  # type: ignore
+from ecdsa import VerifyingKey, SECP256k1, BadSignatureError # type: ignore
 
 # Konfigurasi logging
 logging.basicConfig(filename='blockchain.log', level=logging.INFO)
@@ -146,13 +147,19 @@ class Blockchain:
         self.prune(len(self.chain) - 1) # Menyimpan 1000 blok terakhir
         return block    
     
-    def new_transaction(self, sender, recipient, amount, private_key, signature, public_key=None, fee=5): # tidak menggunakan ini untuk sementara( private_key, signature, public_key=None)
+    def new_transaction(self, sender, recipient, amount, private_key=None, signature=None, public_key=None, fee=5): # tidak menggunakan ini untuk sementara( private_key, signature, public_key=None)
         if sender != '0':  
             total_amount = amount + fee
             if sender not in self.balances or self.balances[sender] < total_amount:
                 raise InsufficientFundsError(f"Sender {sender} has insufficient funds")
             self.balances[sender] -= total_amount
 
+        # Verifikasi tanda tangan jika ada
+        if private_key and signature:
+            message = f'{sender}{recipient}{amount}'
+            if not self.verify_signature(self.public_keys.get(sender, ''), message, signature):
+                raise Exception("Invalid signature")
+            
         # Simpan kunci publik jika belum ada
         if sender not in self.public_keys and public_key:
             self.public_keys[sender] = public_key
@@ -179,10 +186,6 @@ class Blockchain:
             'nonce': uuid4().hex
         }
 
-        message = f'{sender}{recipient}{amount}'
-        if not verify_signature(self.public_keys.get(sender, ''), message, signature):
-            raise InvalidSignatureError("Invalid signature")
-
         if not self.validate_transaction(transaction):
             raise InvalidTransactionError("Invalid transaction")
 
@@ -203,7 +206,18 @@ class Blockchain:
         self.current_transactions.append(transaction)
         logging.info(f"New transaction: {transaction}")
         return self.last_block['index'] + 1
-
+    
+    def verify_signature(self, public_key_str, message, signature):
+        try:
+            vk = VerifyingKey.from_string(bytes.fromhex(public_key_str), curve=SECP256k1)
+            vk.verify(bytes.fromhex(signature), message.encode())
+            return True
+        except BadSignatureError:
+            return False
+        except Exception as e:
+            logging.error(f"Error during signature verification: {e}")
+            return False
+        
     def validate_transaction(self, transaction):
         return all(k in transaction for k in ["sender", "recipient", "amount"]) and \
                isinstance(transaction['amount'], (int, float)) and transaction['amount'] > 0 and \
@@ -226,8 +240,23 @@ class Blockchain:
         return hashlib.sha256(f'{left}{right}'.encode()).hexdigest()
 
     def initialize_balances(self):
-        self.new_transaction(sender='0', recipient='user1', amount=1000, private_key='', signature='') 
-        self.new_transaction(sender='0', recipient='user2', amount=500, private_key='', signature='') 
+        self.new_transaction(
+            sender='0',
+            recipient='user1',
+            amount=1000,
+            public_key='3fd277b9ec175164991295b0fe22f0480760d25657b491e99d53e8639bde6091',
+            private_key='3fd277b9ec175164991295b0fe22f0480760d25657b491e99d53e8639bde6091',
+            signature='7e0b3aaec0f8c8939a3a89fbfb73614b387505ed0cfcb44e6f7eeca9d31e3dd139c9eb01d723957050824ce6c462cc0d492aa37500ff33d47bb4a7d0ec607858'
+        )
+        self.new_transaction(
+            sender='0',
+            recipient='user2',
+            amount=500,
+            public_key='2cce6170810afc568db5725f479612a7a3e24333998a21d23896cd0f3666c02ba726b6c928a242ec558b38ec3b1c82c5eb06feb47b6f582e3939a2bfa310c14e',
+            private_key='65a5a113014d82f070a1ae6972780ffc60423ca02986be27d28bd484c9790d1e',
+            signature='a15ae86852c717fc62f46b92b5c297223a2d2e8bff701097abd7680e5710e029697911989208399f9516f766a605bf19c8d4dc60fbc543114ef914395c4ff3ec'
+        )
+    
         last_proof = self.last_block['proof']
         proof = self.proof_of_work(last_proof)
         self.new_block(proof)
@@ -313,22 +342,28 @@ def mine():
     logging.info('Mining endpoint called')
     try:
         last_block = blockchain.last_block
+        logging.info(f'Last block: {last_block}')
         last_proof = last_block['proof']
         proof = blockchain.proof_of_work(last_proof)
+        logging.info(f'New proof: {proof}')
 
-        private_key = ''  
-        signature = ''  
+        # Gunakan kunci publik, kunci privat, dan tanda tangan yang sesuai
+        private_key = '65a5a113014d82f070a1ae6972780ffc60423ca02986be27d28bd484c9790d1e'
+        public_key = '2cce6170810afc568db5725f479612a7a3e24333998a21d23896cd0f3666c02ba726b6c928a242ec558b38ec3b1c82c5eb06feb47b6f582e3939a2bfa310c14e'
+        signature = 'a15ae86852c717fc62f46b92b5c297223a2d2e8bff701097abd7680e5710e029697911989208399f9516f766a605bf19c8d4dc60fbc543114ef914395c4ff3ec'
         
         blockchain.new_transaction(
             sender="0",
             recipient=blockchain.node_identifier,
             amount=10,
+            public_key=public_key,
             private_key=private_key, 
             signature=signature
         )
 
         previous_hash = blockchain.hash(last_block)
         block = blockchain.new_block(proof, previous_hash)
+        logging.info(f'New block: {block}')
 
         response = {
             'message': "New Block Forged",
