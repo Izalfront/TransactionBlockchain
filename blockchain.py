@@ -1,19 +1,16 @@
+import logging
+import binascii
+import ecdsa # type: ignore
 import hashlib
 import json
-import logging
-import unittest
-import binascii
-import requests  # type: ignore
-import ecdsa  # type: ignore
-import base58  # type: ignore
 from time import time
 from uuid import uuid4
-from flask import Flask, jsonify, request  # type: ignore
-from flask_limiter import Limiter  # type: ignore
-from flask_limiter.util import get_remote_address  # type: ignore
-from cryptography.hazmat.primitives.asymmetric import rsa  # type: ignore
-from cryptography.hazmat.primitives import serialization  # type: ignore
-from ecdsa import VerifyingKey, SECP256k1, BadSignatureError # type: ignore
+from cryptography.hazmat.primitives.asymmetric import rsa # type: ignore
+from cryptography.hazmat.primitives import serialization # type: ignore
+from flask import Flask, jsonify, request # type: ignore
+from flask_limiter import Limiter # type: ignore
+from flask_limiter.util import get_remote_address # type: ignore
+import requests # type: ignore
 
 # Konfigurasi logging
 logging.basicConfig(filename='blockchain.log', level=logging.INFO)
@@ -147,19 +144,16 @@ class Blockchain:
         self.prune(len(self.chain) - 1) # Menyimpan 1000 blok terakhir
         return block    
     
-    def new_transaction(self, sender, recipient, amount, private_key=None, signature=None, public_key=None, fee=5): # tidak menggunakan ini untuk sementara( private_key, signature, public_key=None)
+    def new_transaction(self, sender, recipient, amount, signature, public_key=None, fee=5): # tidak menggunakan ini untuk sementara( private_key, signature, public_key=None)
+        amount = int(amount)
+        fee = int(fee) 
+
         if sender != '0':  
             total_amount = amount + fee
             if sender not in self.balances or self.balances[sender] < total_amount:
                 raise InsufficientFundsError(f"Sender {sender} has insufficient funds")
             self.balances[sender] -= total_amount
 
-        # Verifikasi tanda tangan jika ada
-        if private_key and signature:
-            message = f'{sender}{recipient}{amount}'
-            if not self.verify_signature(self.public_keys.get(sender, ''), message, signature):
-                raise Exception("Invalid signature")
-            
         # Simpan kunci publik jika belum ada
         if sender not in self.public_keys and public_key:
             self.public_keys[sender] = public_key
@@ -186,38 +180,22 @@ class Blockchain:
             'nonce': uuid4().hex
         }
 
+        message = f'{sender}{recipient}{amount}'
+        if not verify_signature(self.public_keys.get(sender, ''), message, signature):
+            raise InvalidSignatureError("Invalid signature")
+
         if not self.validate_transaction(transaction):
             raise InvalidTransactionError("Invalid transaction")
 
-        # Tambahkan transaksi ke blok saat ini jika masih ada ruang
-        if len(self.current_block['transactions']) < self.max_transactions_per_block:
+        if self.current_block and len(self.current_block['transactions']) < self.max_transactions_per_block:
             self.current_block['transactions'].append(transaction)
         else:
-            # Jika blok saat ini penuh, cari blok yang belum penuh
-            for block in reversed(self.chain):
-                if len(block['transactions']) < self.max_transactions_per_block:
-                    block['transactions'].append(transaction)
-                    block['merkle_root'] = self.merkle_root(block['transactions'])
-                    return block['index']
-
-            # Jika semua blok penuh, tambahkan ke mempool
             self.mempool.append(transaction)
 
         self.current_transactions.append(transaction)
         logging.info(f"New transaction: {transaction}")
         return self.last_block['index'] + 1
-    
-    def verify_signature(self, public_key_str, message, signature):
-        try:
-            vk = VerifyingKey.from_string(bytes.fromhex(public_key_str), curve=SECP256k1)
-            vk.verify(bytes.fromhex(signature), message.encode())
-            return True
-        except BadSignatureError:
-            return False
-        except Exception as e:
-            logging.error(f"Error during signature verification: {e}")
-            return False
-        
+
     def validate_transaction(self, transaction):
         return all(k in transaction for k in ["sender", "recipient", "amount"]) and \
                isinstance(transaction['amount'], (int, float)) and transaction['amount'] > 0 and \
@@ -240,23 +218,8 @@ class Blockchain:
         return hashlib.sha256(f'{left}{right}'.encode()).hexdigest()
 
     def initialize_balances(self):
-        self.new_transaction(
-            sender='0',
-            recipient='user1',
-            amount=1000,
-            public_key='3fd277b9ec175164991295b0fe22f0480760d25657b491e99d53e8639bde6091',
-            private_key='3fd277b9ec175164991295b0fe22f0480760d25657b491e99d53e8639bde6091',
-            signature='7e0b3aaec0f8c8939a3a89fbfb73614b387505ed0cfcb44e6f7eeca9d31e3dd139c9eb01d723957050824ce6c462cc0d492aa37500ff33d47bb4a7d0ec607858'
-        )
-        self.new_transaction(
-            sender='0',
-            recipient='user2',
-            amount=500,
-            public_key='2cce6170810afc568db5725f479612a7a3e24333998a21d23896cd0f3666c02ba726b6c928a242ec558b38ec3b1c82c5eb06feb47b6f582e3939a2bfa310c14e',
-            private_key='65a5a113014d82f070a1ae6972780ffc60423ca02986be27d28bd484c9790d1e',
-            signature='a15ae86852c717fc62f46b92b5c297223a2d2e8bff701097abd7680e5710e029697911989208399f9516f766a605bf19c8d4dc60fbc543114ef914395c4ff3ec'
-        )
-    
+        self.new_transaction(sender='0', recipient='user1', amount=1000, private_key='', signature='') 
+        self.new_transaction(sender='0', recipient='user2', amount=500, private_key='', signature='') 
         last_proof = self.last_block['proof']
         proof = self.proof_of_work(last_proof)
         self.new_block(proof)
@@ -342,28 +305,21 @@ def mine():
     logging.info('Mining endpoint called')
     try:
         last_block = blockchain.last_block
-        logging.info(f'Last block: {last_block}')
         last_proof = last_block['proof']
         proof = blockchain.proof_of_work(last_proof)
-        logging.info(f'New proof: {proof}')
 
-        # Gunakan kunci publik, kunci privat, dan tanda tangan yang sesuai
-        private_key = '65a5a113014d82f070a1ae6972780ffc60423ca02986be27d28bd484c9790d1e'
-        public_key = '2cce6170810afc568db5725f479612a7a3e24333998a21d23896cd0f3666c02ba726b6c928a242ec558b38ec3b1c82c5eb06feb47b6f582e3939a2bfa310c14e'
-        signature = 'a15ae86852c717fc62f46b92b5c297223a2d2e8bff701097abd7680e5710e029697911989208399f9516f766a605bf19c8d4dc60fbc543114ef914395c4ff3ec'
-        
+        # Reward untuk mining
         blockchain.new_transaction(
             sender="0",
             recipient=blockchain.node_identifier,
             amount=10,
-            public_key=public_key,
-            private_key=private_key, 
-            signature=signature
+            private_key='',  # Tidak perlu private key untuk transaksi reward
+            signature='',  # Tidak perlu signature untuk transaksi reward
+            public_key=None
         )
 
         previous_hash = blockchain.hash(last_block)
         block = blockchain.new_block(proof, previous_hash)
-        logging.info(f'New block: {block}')
 
         response = {
             'message': "New Block Forged",
@@ -375,13 +331,14 @@ def mine():
         logging.info(f'Mining successful: {response}')
         return jsonify(response), 200
     except Exception as e:
-        logging.error(f'Error during mining: {e}')
-        return jsonify({'message': 'Internal server error'}), 500
+        logging.error(f'Error during mining: {str(e)}')
+        return jsonify({'message': f'Internal server error: {str(e)}'}), 500
 
 @app.route('/transactions/new', methods=['POST'])
 @limiter.limit("5 per minute")
 def new_transaction():
     values = request.get_json()
+    logging.info(f"Received values: {values}")
 
     required = ['sender', 'recipient', 'amount', 'fee', 'private_key', 'signature', 'public_key']
     if not all(k in values for k in required):
@@ -391,15 +348,16 @@ def new_transaction():
         index = blockchain.new_transaction(
             values['sender'],
             values['recipient'],
-            values['amount'],
-            values['fee'],
+            int(values['amount']),
             values['private_key'],
             values['signature'],
-            values['public_key']
+            values['public_key'],
+            int(values['fee'])
         )
         response = {'message': f'Transaction will be added to Block {index}'}
         return jsonify(response), 201
-    except (InsufficientFundsError, InvalidTransactionError, InvalidSignatureError) as e:
+    except Exception as e:
+        logging.error(f"Error in new_transaction: {str(e)}")
         return jsonify({'error': str(e)}), 400
 
 @app.route('/chain', methods=['GET'])

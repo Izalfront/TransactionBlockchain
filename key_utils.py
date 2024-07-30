@@ -1,4 +1,4 @@
-import ecdsa
+import ecdsa # type: ignore
 import binascii
 
 def generate_keys():
