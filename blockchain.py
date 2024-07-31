@@ -5,6 +5,7 @@ import hashlib
 import json
 from time import time
 from uuid import uuid4
+from key_utils import verify_signature
 from cryptography.hazmat.primitives.asymmetric import rsa # type: ignore
 from cryptography.hazmat.primitives import serialization # type: ignore
 from flask import Flask, jsonify, request # type: ignore
@@ -24,37 +25,6 @@ class InvalidTransactionError(Exception):
 
 class InvalidSignatureError(Exception):
     pass
-
-# Fungsi untuk membuat tanda tangan
-def create_signature(private_key, message):
-    sk = ecdsa.SigningKey.from_string(binascii.unhexlify(private_key), curve=ecdsa.SECP256k1)
-    signature = sk.sign(message.encode())
-    return binascii.hexlify(signature).decode()
-
-def verify_signature(public_key, message, signature):
-    try:
-        vk = ecdsa.VerifyingKey.from_string(binascii.unhexlify(public_key), curve=ecdsa.SECP256k1)
-        return vk.verify(binascii.unhexlify(signature), message.encode())
-    except Exception as e:
-        print(f"Verification error: {e}")
-        return False
-
-class KeyManager:
-    @staticmethod
-    def generate_key_pair():
-        private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=2048
-        )
-        public_key = private_key.public_key()
-        return private_key, public_key
-
-    @staticmethod
-    def serialize_public_key(public_key):
-        return public_key.public_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo
-        )
 
 class SmartContract:
     def __init__(self, code):
@@ -163,13 +133,6 @@ class Blockchain:
         self.balances[recipient] += amount
 
         self.balances[self.node_identifier] += fee
-
-        # Verifikasi tanda tangan
-        message = f'{sender}{recipient}{amount}'
-        logging.info(f"Verifying signature: public_key={public_key}, message={message}, signature={signature}")
-        if not verify_signature(public_key, message, signature):
-            logging.error('Invalid signature')
-            raise ValueError('Invalid signature') 
                
         # Tambahkan transaksi ke daftar transaksi saat ini
         # self.current_transactions.append({

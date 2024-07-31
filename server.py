@@ -73,7 +73,10 @@ def new_transaction():
         
         # Siapkan pesan untuk validasi tanda tangan
         message = f"{values['sender']}{values['recipient']}{values['amount']}"
-        
+        logging.info(f"Message to verify: {message}")
+        logging.info(f"Public key: {values['public_key']}")
+        logging.info(f"Signature: {values['signature']}")
+                
         # Validasi tanda tangan
         if not verify_signature(values['public_key'], message, values['signature']):
             logging.error("Invalid signature")

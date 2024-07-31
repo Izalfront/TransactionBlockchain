@@ -26,7 +26,7 @@ if __name__ == "__main__":
     print("Private Key:", private_key)
     print("Public Key:", public_key)
 
-    message = "user1user212"
+    message = "user1user250"
     signature = create_signature(private_key, message)
     print("Signature:", signature)
 
