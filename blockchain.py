@@ -6,6 +6,7 @@ import json
 from time import time
 from uuid import uuid4
 from key_utils import verify_signature
+import requests # type: ignore
 from cryptography.hazmat.primitives.asymmetric import rsa # type: ignore
 from cryptography.hazmat.primitives import serialization # type: ignore
 from flask import Flask, jsonify, request # type: ignore
@@ -56,16 +57,18 @@ class Blockchain:
         # Buat genesis block
         self.new_block(previous_hash='1', proof=100)
         # Inisialisasi saldo miner dengan reward dari genesis block
-        self.balances[self.node_identifier] = 10
+        self.balances[self.node_identifier] = 5
         # Inisialisasi saldo awal untuk pengguna tambahan
         self.balances['user1'] = 1000
         self.balances['user2'] = 500
 
     def prune(self, index):
-        if index < len(self.chain):
-            self.pruned_blocks.update({block['index']: block for block in self.chain[:index]})
-            self.chain = self.chain[index:]
+        if index > 1:
+            self.pruned_blocks.update({block['index']: block for block in self.chain[:index-1]})
+            self.chain = self.chain[index-1:]
             logging.info(f"Pruned blockchain to index {index}")
+        else:
+            logging.warning("Cannot prune to index less than or equal to 1")
 
     def create_new_block(self, proof, previous_hash=None):
         block = {
@@ -85,13 +88,12 @@ class Blockchain:
     
         # Finalisasi blok saat ini
         self.current_block['merkle_root'] = self.merkle_root(self.current_block['transactions'])
-        self.chain.append(self.current_block)
 
         transactions = [
             {
                 'sender': '0',  # Penanda untuk transaksi Coinbase
                 'recipient': self.node_identifier,  # Alamat miner
-                'amount': 10,   # Hadiah blok, misalnya 10 unit cryptocurrency
+                'amount': 5,   # Hadiah blok, misalnya 5 unit cryptocurrency
             }
         ] + self.current_transactions
 
@@ -101,20 +103,22 @@ class Blockchain:
             'transactions': transactions,
             'proof': proof,
             'previous_hash': previous_hash or self.hash(self.chain[-1]),
-            'merkle_root': self.merkle_root(transactions)
+            'merkle_root': self.merkle_root(self.current_transactions)
         }
 
         self.current_transactions = []
         self.chain.append(block)
 
-        self.supply += 10
+        self.supply += 5
         if self.supply > self.initial_supply:
             raise Exception("Total supply exceeded the maximum limit")
 
-        self.prune(len(self.chain) - 1) # Menyimpan 1000 blok terakhir
+        if len(self.chain) > 1000:
+            self.prune(len(self.chain) - 1000) # Menyimpan 1000 blok terakhir
+            
         return block    
     
-    def new_transaction(self, sender, recipient, amount, signature, public_key=None, fee=5):
+    def new_transaction(self, sender, recipient, amount, signature, public_key, fee=5):
         amount = int(amount)
         fee = int(fee) 
 
@@ -123,6 +127,17 @@ class Blockchain:
             if sender not in self.balances or self.balances[sender] < total_amount:
                 raise InsufficientFundsError(f"Sender {sender} has insufficient funds")
             self.balances[sender] -= total_amount
+
+        logging.info(f"New transaction: sender={sender}, recipient={recipient}, public_key={public_key}")
+        #Tambahkan transaksi ke daftar transaksi saat ini
+        self.current_transactions.append({
+            'sender': sender,
+            'recipient': recipient,
+            'amount': amount,
+            'signature': signature,
+            'public_key': public_key,
+            'fee': fee
+        })
 
         # Simpan kunci publik jika belum ada
         if sender not in self.public_keys and public_key:
@@ -133,13 +148,6 @@ class Blockchain:
         self.balances[recipient] += amount
 
         self.balances[self.node_identifier] += fee
-               
-        # Tambahkan transaksi ke daftar transaksi saat ini
-        # self.current_transactions.append({
-        #     'sender': sender,
-        #     'recipient': recipient,
-        #     'amount': amount
-        # })
 
         transaction = {
             'sender': sender,
@@ -147,12 +155,13 @@ class Blockchain:
             'amount': amount,
             'fee': fee,
             'timestamp': time(),
-            'nonce': uuid4().hex
+            'nonce': uuid4().hex,
+            'signature': signature
         }
 
         if not self.validate_transaction(transaction):
             raise InvalidTransactionError("Invalid transaction")
-        
+    
         if self.current_block and len(self.current_block['transactions']) < self.max_transactions_per_block:
             self.current_block['transactions'].append(transaction)
         else:
@@ -163,9 +172,20 @@ class Blockchain:
         return self.last_block['index'] + 1
 
     def validate_transaction(self, transaction):
-        return all(k in transaction for k in ["sender", "recipient", "amount"]) and \
-               isinstance(transaction['amount'], (int, float)) and transaction['amount'] > 0 and \
-               transaction['sender'] != transaction['recipient']
+        if not all(k in transaction for k in ["sender", "recipient", "amount", "signature"]):
+            return False
+        if not isinstance(transaction['amount'], (int, float)) or transaction['amount'] <= 0:
+            return False
+        if transaction['sender'] == transaction['recipient']:
+            return False
+    
+        # Validasi tanda tangan
+        if transaction['sender'] != '0':  # Abaikan validasi tanda tangan untuk transaksi coinbase
+            public_key = self.public_keys.get(transaction['sender'])
+            if not public_key or not verify_signature(public_key, transaction, transaction['signature']):
+                raise InvalidSignatureError("Invalid signature")
+    
+        return True
 
     def validate_block(self, block):
         return block['index'] == len(self.chain) + 1 and \
@@ -232,20 +252,25 @@ class Blockchain:
 
         max_length = len(self.chain)
 
-        for node in neighbours:
-            response = requests.get(f'http://{node}/chain')
-            if response.status_code == 200:
-                length = response.json()['length']
-                chain = response.json()['chain']
+        try:
+            for node in neighbours:
+                response = requests.get(f'http://{node}/chain')
+                if response.status_code == 200:
+                    length = response.json()['length']
+                    chain = response.json()['chain']
 
-                if length > max_length and self.valid_chain(chain):
-                    max_length = length
-                    new_chain = chain
+                    if length > max_length and self.valid_chain(chain):
+                        max_length = length
+                        new_chain = chain
+        except requests.RequestException as e:
+            logging.error(f"Failed to connect to node {node}: {e}")
 
         if new_chain:
             self.chain = new_chain
+            logging.info("Chain was replaced with a longer valid chain from the network")
             return True
-
+        
+        logging.info("Chain is authoritative and no longer valid chain found")
         return False
 
     def register_node(self, address):

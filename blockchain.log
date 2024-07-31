@@ -1,28 +1,82 @@
-INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'fee': 5, 'signature': '9b84117f2b9721d3060c8ea46059df0293ab4d3f91cb0d39eee5bb1d38c318f203674ab882dd83c07dab3697633ab9175a3db543e95b23e0b10f758ee0bf4f7e', 'public_key': '74328aa92b6678de33fd0d04aa701f9a7c5b397c1a068f326f5ed9f73f17ddc529780b19fc846631f68c51b3b2a7de86164e94efc0b4e44fab48a922d0cc8599'}
-INFO:root:Message to verify: user1user250
-INFO:root:Public key: 74328aa92b6678de33fd0d04aa701f9a7c5b397c1a068f326f5ed9f73f17ddc529780b19fc846631f68c51b3b2a7de86164e94efc0b4e44fab48a922d0cc8599
-INFO:root:Signature: 9b84117f2b9721d3060c8ea46059df0293ab4d3f91cb0d39eee5bb1d38c318f203674ab882dd83c07dab3697633ab9175a3db543e95b23e0b10f758ee0bf4f7e
-ERROR:root:Invalid signature
-INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 15:05:32] "[31m[1mPOST /transactions/new HTTP/1.1[0m" 400 -
 INFO:root:Pruned blockchain to index 1
 WARNING:werkzeug: * Running on all addresses.
    WARNING: This is a development server. Do not use it in a production deployment.
 INFO:werkzeug: * Running on http://192.168.100.135:5000/ (Press CTRL+C to quit)
-INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'fee': 5, 'signature': '9b84117f2b9721d3060c8ea46059df0293ab4d3f91cb0d39eee5bb1d38c318f203674ab882dd83c07dab3697633ab9175a3db543e95b23e0b10f758ee0bf4f7e', 'public_key': '74328aa92b6678de33fd0d04aa701f9a7c5b397c1a068f326f5ed9f73f17ddc529780b19fc846631f68c51b3b2a7de86164e94efc0b4e44fab48a922d0cc8599'}
-INFO:root:Message to verify: user1user250
-INFO:root:Public key: 74328aa92b6678de33fd0d04aa701f9a7c5b397c1a068f326f5ed9f73f17ddc529780b19fc846631f68c51b3b2a7de86164e94efc0b4e44fab48a922d0cc8599
-INFO:root:Signature: 9b84117f2b9721d3060c8ea46059df0293ab4d3f91cb0d39eee5bb1d38c318f203674ab882dd83c07dab3697633ab9175a3db543e95b23e0b10f758ee0bf4f7e
-ERROR:root:Invalid signature
-INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 15:12:35] "[31m[1mPOST /transactions/new HTTP/1.1[0m" 400 -
-INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'fee': 5, 'signature': '9b84117f2b9721d3060c8ea46059df0293ab4d3f91cb0d39eee5bb1d38c318f203674ab882dd83c07dab3697633ab9175a3db543e95b23e0b10f758ee0bf4f7e', 'public_key': '74328aa92b6678de33fd0d04aa701f9a7c5b397c1a068f326f5ed9f73f17ddc529780b19fc846631f68c51b3b2a7de86164e94efc0b4e44fab48a922d0cc8599'}
-INFO:root:Message to verify: user1user250
-INFO:root:Public key: 74328aa92b6678de33fd0d04aa701f9a7c5b397c1a068f326f5ed9f73f17ddc529780b19fc846631f68c51b3b2a7de86164e94efc0b4e44fab48a922d0cc8599
-INFO:root:Signature: 9b84117f2b9721d3060c8ea46059df0293ab4d3f91cb0d39eee5bb1d38c318f203674ab882dd83c07dab3697633ab9175a3db543e95b23e0b10f758ee0bf4f7e
-ERROR:root:Invalid signature
-INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 15:12:36] "[31m[1mPOST /transactions/new HTTP/1.1[0m" 400 -
-INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 15:12:48] "GET /balance/user2 HTTP/1.1" 200 -
 INFO:root:Mining endpoint called
-INFO:root:Transaction added: sender=0, recipient=5875bcef83394fb9a0fc5aa86092c497, amount=1
+INFO:root:New transaction: sender=0, recipient=2810888987d943718ec919a0a161bf07, public_key=
+INFO:root:Transaction added: sender=0, recipient=2810888987d943718ec919a0a161bf07, amount=1
 INFO:root:Pruned blockchain to index 2
-INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 3, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 10}, {'sender': '0', 'recipient': '5875bcef83394fb9a0fc5aa86092c497', 'amount': 1, 'fee': 5, 'timestamp': 1722409972.0196939, 'nonce': '79bf829570274f51aa65ec8cab1d3168'}], 'proof': 35293, 'previous_hash': '9d8d2571731514f7eec0f00d2b8d60ddcfd552101131e00b0069c1736c46aca3'}
-INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 15:12:52] "GET /mine HTTP/1.1" 200 -
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 3, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': '2810888987d943718ec919a0a161bf07', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': '2810888987d943718ec919a0a161bf07', 'amount': 1, 'fee': 5, 'timestamp': 1722438954.1657057, 'nonce': 'c191aa389c644f63870d67c4c9eca03c', 'signature': ''}], 'proof': 35293, 'previous_hash': '9eb8cf20d97cbeeb1230f4822328e71e1c8da63f6175bf1d0ea66b339f3a898d'}
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:15:54] "GET /mine HTTP/1.1" 200 -
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.135:5000/ (Press CTRL+C to quit)
+INFO:root:Mining endpoint called
+INFO:root:New transaction: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, public_key=
+INFO:root:Transaction added: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 4, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'fee': 5, 'timestamp': 1722439096.1215394, 'nonce': '679f45a1b8204c3db6acca41687a84d1', 'signature': ''}], 'proof': 35293, 'previous_hash': '9e9ee4214c2bfa07ed4bd54eb81dbe69cf674fda5f8750f855940aec51cf2cd7'}
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:16] "GET /mine HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, public_key=
+INFO:root:Transaction added: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 3, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'fee': 5, 'timestamp': 1722439097.5170035, 'nonce': '60314355b37a47f4a06498214288388c', 'signature': ''}], 'proof': 35089, 'previous_hash': 'af4c97de9295f972482ceea89462987f9a43a39e29399dd85b4d5ec847b3e7bd'}
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:17] "GET /mine HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, public_key=
+INFO:root:Transaction added: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 4, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'fee': 5, 'timestamp': 1722439098.8013835, 'nonce': 'b948c40812fc4a13afbdfe7bd40169cc', 'signature': ''}], 'proof': 119678, 'previous_hash': '6ebb3933dbf0cdc8fe8295010d411c2fef64144b71bb811f4f04f9848dfc801e'}
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:18] "GET /mine HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, public_key=
+INFO:root:Transaction added: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 5, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'fee': 5, 'timestamp': 1722439099.845816, 'nonce': '8615b2703ee64fd88faa2e4ee527597d', 'signature': ''}], 'proof': 146502, 'previous_hash': 'c1262cf3d94d73d9a5d9385a79a07018f09a95a15f1da61c77a4ed31e4ba088e'}
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:19] "GET /mine HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, public_key=
+INFO:root:Transaction added: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 5, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'fee': 5, 'timestamp': 1722439100.6314898, 'nonce': '15af1c2d03bf4a1594e76250e9e2a03c', 'signature': ''}], 'proof': 43538, 'previous_hash': '2e68e7de6c1e4121f5172c4292022391b889000ca9f3e7e40abb655daaad0833'}
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:20] "GET /mine HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, public_key=
+INFO:root:Transaction added: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 6, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'fee': 5, 'timestamp': 1722439101.655276, 'nonce': '4239aa9bc5a843e99ee9657571620a0b', 'signature': ''}], 'proof': 85724, 'previous_hash': '58bea56a3e7b5e6fdeb11f23e82d8d42b5f16d43de2a120701fb40ff060387b8'}
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:21] "GET /mine HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, public_key=
+INFO:root:Transaction added: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 5, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'fee': 5, 'timestamp': 1722439102.4696436, 'nonce': '3139eed2d7af4eb0b49ba935767cb5fc', 'signature': ''}], 'proof': 51178, 'previous_hash': '2c2923edf0097d50b08ed7c75fa5fea9938ed08495da1d3c5bac68321d9aa3d1'}
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:22] "GET /mine HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, public_key=
+INFO:root:Transaction added: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 6, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'fee': 5, 'timestamp': 1722439103.3195825, 'nonce': '0b3eb4052c7b4ba8919cbca1f1ead624', 'signature': ''}], 'proof': 71730, 'previous_hash': '4d0b9074e7a88ec05e57589ce0fd3c0340e71cb0d66c1b97ef2af526de379ee6'}
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:23] "GET /mine HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, public_key=
+INFO:root:Transaction added: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 7, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'fee': 5, 'timestamp': 1722439104.119167, 'nonce': '5c679f0f355845c59eef13fc93acd9af', 'signature': ''}], 'proof': 55589, 'previous_hash': '050754c7ec5861d50289549c5b194295b24e215328c724170d0c98523e77888c'}
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:24] "GET /mine HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, public_key=
+INFO:root:Transaction added: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 5, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'fee': 5, 'timestamp': 1722439104.8982556, 'nonce': '2f62412de0b249709581a1f0eb8391a7', 'signature': ''}], 'proof': 35704, 'previous_hash': '2bd08d48acb2a1cffedf6385f0bec7e6882894da94cd71de961720840a70ad61'}
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:24] "GET /mine HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, public_key=
+INFO:root:Transaction added: sender=0, recipient=e5cf9673f4474c6d9fd1a2f28ebe1484, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 6, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': 'e5cf9673f4474c6d9fd1a2f28ebe1484', 'amount': 1, 'fee': 5, 'timestamp': 1722439105.8069851, 'nonce': '5a9790292e2742d3af75c5e7bc94a9f5', 'signature': ''}], 'proof': 57342, 'previous_hash': 'c47d31b3a0213d5ddb030d24286a2589c8377bb20fe8bcac2aadbc8e0214936d'}
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:25] "GET /mine HTTP/1.1" 200 -
+INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'fee': 5, 'signature': '9b84117f2b9721d3060c8ea46059df0293ab4d3f91cb0d39eee5bb1d38c318f203674ab882dd83c07dab3697633ab9175a3db543e95b23e0b10f758ee0bf4f7e', 'public_key': '74328aa92b6678de33fd0d04aa701f9a7c5b397c1a068f326f5ed9f73f17ddc529780b19fc846631f68c51b3b2a7de86164e94efc0b4e44fab48a922d0cc8599'}
+INFO:root:Message to verify: user1user250
+INFO:root:Public key: 74328aa92b6678de33fd0d04aa701f9a7c5b397c1a068f326f5ed9f73f17ddc529780b19fc846631f68c51b3b2a7de86164e94efc0b4e44fab48a922d0cc8599
+INFO:root:Signature: 9b84117f2b9721d3060c8ea46059df0293ab4d3f91cb0d39eee5bb1d38c318f203674ab882dd83c07dab3697633ab9175a3db543e95b23e0b10f758ee0bf4f7e
+ERROR:root:Invalid signature
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:29] "[31m[1mPOST /transactions/new HTTP/1.1[0m" 400 -
+INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'fee': 5, 'signature': '9b84117f2b9721d3060c8ea46059df0293ab4d3f91cb0d39eee5bb1d38c318f203674ab882dd83c07dab3697633ab9175a3db543e95b23e0b10f758ee0bf4f7e', 'public_key': '74328aa92b6678de33fd0d04aa701f9a7c5b397c1a068f326f5ed9f73f17ddc529780b19fc846631f68c51b3b2a7de86164e94efc0b4e44fab48a922d0cc8599'}
+INFO:root:Message to verify: user1user250
+INFO:root:Public key: 74328aa92b6678de33fd0d04aa701f9a7c5b397c1a068f326f5ed9f73f17ddc529780b19fc846631f68c51b3b2a7de86164e94efc0b4e44fab48a922d0cc8599
+INFO:root:Signature: 9b84117f2b9721d3060c8ea46059df0293ab4d3f91cb0d39eee5bb1d38c318f203674ab882dd83c07dab3697633ab9175a3db543e95b23e0b10f758ee0bf4f7e
+ERROR:root:Invalid signature
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:30] "[31m[1mPOST /transactions/new HTTP/1.1[0m" 400 -
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:33] "GET /chain HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:18:34] "GET /chain HTTP/1.1" 200 -

@@ -33,7 +33,7 @@ def mine():
         # Menyelesaikan proof of work untuk blok baru
         proof = blockchain.proof_of_work(last_proof)
 
-        # Menambahkan transaksi baru
+        # Menambahkan transaksi baru (reward untuk mining)
         blockchain.new_transaction(
             sender="0",
             recipient=node_identifier,
