@@ -161,12 +161,13 @@ def consensus():
 @app.route('/balance/<address>', methods=['GET'])
 def get_balance(address):
     balance = blockchain.balances.get(address, 0)
-    public_key = blockchain.public_keys.get(address)
+    public_key = blockchain.public_keys.get(address, 'Not found')
     response = {
         'address': address,
         'balance': balance,
         'public_key': public_key
     }
+    logging.info(f"Balance check for {address}: {response}")
     return jsonify(response), 200
 
 if __name__ == '__main__':
