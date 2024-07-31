@@ -1,4 +1,4 @@
-import ecdsa # type: ignore
+import ecdsa  # type: ignore
 import binascii
 
 def generate_keys():
@@ -21,7 +21,7 @@ def verify_signature(public_key, message, signature):
         return False
 
 if __name__ == "__main__":
-    # Contoh penggunaan
+   
     private_key, public_key = generate_keys()
     print("Private Key:", private_key)
     print("Public Key:", public_key)

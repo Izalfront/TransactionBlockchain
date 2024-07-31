@@ -144,7 +144,7 @@ class Blockchain:
         self.prune(len(self.chain) - 1) # Menyimpan 1000 blok terakhir
         return block    
     
-    def new_transaction(self, sender, recipient, amount, signature, public_key=None, fee=5): # tidak menggunakan ini untuk sementara( private_key, signature, public_key=None)
+    def new_transaction(self, sender, recipient, amount, signature, public_key=None, fee=5):
         amount = int(amount)
         fee = int(fee) 
 
@@ -163,13 +163,20 @@ class Blockchain:
         self.balances[recipient] += amount
 
         self.balances[self.node_identifier] += fee
-        
+
+        # Verifikasi tanda tangan
+        message = f'{sender}{recipient}{amount}'
+        logging.info(f"Verifying signature: public_key={public_key}, message={message}, signature={signature}")
+        if not verify_signature(public_key, message, signature):
+            logging.error('Invalid signature')
+            raise ValueError('Invalid signature') 
+               
         # Tambahkan transaksi ke daftar transaksi saat ini
-        self.current_transactions.append({
-            'sender': sender,
-            'recipient': recipient,
-            'amount': amount
-        })
+        # self.current_transactions.append({
+        #     'sender': sender,
+        #     'recipient': recipient,
+        #     'amount': amount
+        # })
 
         transaction = {
             'sender': sender,
@@ -180,20 +187,16 @@ class Blockchain:
             'nonce': uuid4().hex
         }
 
-        message = f'{sender}{recipient}{amount}'
-        if not verify_signature(self.public_keys.get(sender, ''), message, signature):
-            raise InvalidSignatureError("Invalid signature")
-
         if not self.validate_transaction(transaction):
             raise InvalidTransactionError("Invalid transaction")
-
+        
         if self.current_block and len(self.current_block['transactions']) < self.max_transactions_per_block:
             self.current_block['transactions'].append(transaction)
         else:
             self.mempool.append(transaction)
 
         self.current_transactions.append(transaction)
-        logging.info(f"New transaction: {transaction}")
+        logging.info(f"Transaction added: sender={sender}, recipient={recipient}, amount={amount}")
         return self.last_block['index'] + 1
 
     def validate_transaction(self, transaction):
@@ -218,8 +221,8 @@ class Blockchain:
         return hashlib.sha256(f'{left}{right}'.encode()).hexdigest()
 
     def initialize_balances(self):
-        self.new_transaction(sender='0', recipient='user1', amount=1000, private_key='', signature='') 
-        self.new_transaction(sender='0', recipient='user2', amount=500, private_key='', signature='') 
+        self.new_transaction(sender='0', recipient='user1', amount=1000, signature='') 
+        self.new_transaction(sender='0', recipient='user2', amount=500, signature='') 
         last_proof = self.last_block['proof']
         proof = self.proof_of_work(last_proof)
         self.new_block(proof)
@@ -291,118 +294,3 @@ class Blockchain:
             logging.info("Our chain was replaced")
         else:
             logging.info("Our chain is authoritative")
-
-# Node setup
-app = Flask(__name__)
-limiter = Limiter(get_remote_address, app=app)
-
-node_identifier = str(uuid4()).replace('-', '')
-
-blockchain = Blockchain()
-
-@app.route('/mine', methods=['GET'])
-def mine():
-    logging.info('Mining endpoint called')
-    try:
-        last_block = blockchain.last_block
-        last_proof = last_block['proof']
-        proof = blockchain.proof_of_work(last_proof)
-
-        # Reward untuk mining
-        blockchain.new_transaction(
-            sender="0",
-            recipient=blockchain.node_identifier,
-            amount=10,
-            private_key='',  # Tidak perlu private key untuk transaksi reward
-            signature='',  # Tidak perlu signature untuk transaksi reward
-            public_key=None
-        )
-
-        previous_hash = blockchain.hash(last_block)
-        block = blockchain.new_block(proof, previous_hash)
-
-        response = {
-            'message': "New Block Forged",
-            'index': block['index'],
-            'transactions': block['transactions'],
-            'proof': block['proof'],
-            'previous_hash': block['previous_hash'],
-        }
-        logging.info(f'Mining successful: {response}')
-        return jsonify(response), 200
-    except Exception as e:
-        logging.error(f'Error during mining: {str(e)}')
-        return jsonify({'message': f'Internal server error: {str(e)}'}), 500
-
-@app.route('/transactions/new', methods=['POST'])
-@limiter.limit("5 per minute")
-def new_transaction():
-    values = request.get_json()
-    logging.info(f"Received values: {values}")
-
-    required = ['sender', 'recipient', 'amount', 'fee', 'private_key', 'signature', 'public_key']
-    if not all(k in values for k in required):
-        return 'Missing values', 400
-
-    try:
-        index = blockchain.new_transaction(
-            values['sender'],
-            values['recipient'],
-            int(values['amount']),
-            values['private_key'],
-            values['signature'],
-            values['public_key'],
-            int(values['fee'])
-        )
-        response = {'message': f'Transaction will be added to Block {index}'}
-        return jsonify(response), 201
-    except Exception as e:
-        logging.error(f"Error in new_transaction: {str(e)}")
-        return jsonify({'error': str(e)}), 400
-
-@app.route('/chain', methods=['GET'])
-def full_chain():
-    response = {
-        'chain': blockchain.chain,
-        'length': len(blockchain.chain),
-    }
-    return jsonify(response), 200
-
-@app.route('/nodes/register', methods=['POST'])
-@limiter.limit("5 per minute")
-def register_nodes():
-    values = request.get_json()
-
-    nodes = values.get('nodes')
-    if nodes is None:
-        return "Error: Please supply a valid list of nodes", 400
-
-    for node in nodes:
-        blockchain.register_node(node)
-
-    response = {
-        'message': 'New nodes have been added',
-        'total_nodes': list(blockchain.nodes),
-    }
-    return jsonify(response), 201
-
-@app.route('/nodes/resolve', methods=['GET'])
-@limiter.limit("5 per minute")
-def consensus():
-    replaced = blockchain.resolve_conflicts()
-
-    if replaced:
-        response = {
-            'message': 'Our chain was replaced',
-            'new_chain': blockchain.chain
-        }
-    else:
-        response = {
-            'message': 'Our chain is authoritative',
-            'chain': blockchain.chain
-        }
-
-    return jsonify(response), 200
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)

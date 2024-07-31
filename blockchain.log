@@ -1,0 +1,30 @@
+INFO:root:Pruned blockchain to index 1
+INFO:root:Pruned blockchain to index 1
+INFO:root:Pruned blockchain to index 1
+INFO:root:Pruned blockchain to index 1
+INFO:root:Pruned blockchain to index 1
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.135:5000/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 10:38:20] "GET /chain HTTP/1.1" 200 -
+INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'fee': 5, 'signature': 'f983941cdb4261e02df7bf24984e5551b6661aa177c9e600f1d88ceea994a1336226d2534958cc00c23392a5193d12ef22b9e15abf53bb43b77f65887e7b59c1', 'public_key': '384f4e33acba2c24f339e6055f0bde8ef50b4f26999c8adaebcedd6e85c9fc76d09d1c0d35ae00100233c0df5ae1a671a8cf1914c869528a5e63ce7f2280c86d'}
+ERROR:root:Invalid signature
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 10:38:25] "[31m[1mPOST /transactions/new HTTP/1.1[0m" 400 -
+INFO:root:Mining endpoint called
+INFO:root:Verifying signature: public_key=, message=08480de467ec84b6aafca45dc2523ce341, signature=
+ERROR:root:Invalid signature
+ERROR:root:Error during mining: Invalid signature
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 10:38:28] "[35m[1mGET /mine HTTP/1.1[0m" 500 -
+INFO:root:Pruned blockchain to index 1
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.135:5000/ (Press CTRL+C to quit)
+INFO:root:Mining endpoint called
+INFO:root:Verifying signature: public_key=, message=0033dccc487f64b5ba3ed81e130b0bd2a1, signature=
+ERROR:root:Invalid signature
+ERROR:root:Error during mining: Invalid signature
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 10:44:48] "[35m[1mGET /mine HTTP/1.1[0m" 500 -
+INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'fee': 5, 'signature': 'f983941cdb4261e02df7bf24984e5551b6661aa177c9e600f1d88ceea994a1336226d2534958cc00c23392a5193d12ef22b9e15abf53bb43b77f65887e7b59c1', 'public_key': '384f4e33acba2c24f339e6055f0bde8ef50b4f26999c8adaebcedd6e85c9fc76d09d1c0d35ae00100233c0df5ae1a671a8cf1914c869528a5e63ce7f2280c86d'}
+ERROR:root:Invalid signature
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 10:44:53] "[31m[1mPOST /transactions/new HTTP/1.1[0m" 400 -
+INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 10:44:56] "GET /chain HTTP/1.1" 200 -

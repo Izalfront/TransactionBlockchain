@@ -3,14 +3,18 @@ import json
 from time import time
 from uuid import uuid4
 import logging
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request # type: ignore
+from flask_limiter import Limiter # type: ignore
+from flask_limiter.util import get_remote_address # type: ignore
 from blockchain import Blockchain
 from key_utils import verify_signature
 
 # Konfigurasi logging
 logging.basicConfig(filename='blockchain.log', level=logging.INFO)
 
+# Setup Flask app
 app = Flask(__name__)
+limiter = Limiter(get_remote_address, app=app)
 
 # Generate a globally unique address for this node
 node_identifier = str(uuid4()).replace('-', '')
@@ -34,9 +38,8 @@ def mine():
             sender="0",
             recipient=node_identifier,
             amount=1,
-            public_key=None,
-            private_key=None,
-            signature=None
+            signature='',
+            public_key=''
         )
 
         # Membuat blok baru
@@ -63,19 +66,27 @@ def new_transaction():
         values = request.get_json()
         logging.info(f"Received values: {values}")
 
-        required = ['sender', 'recipient', 'amount', 'public_key', 'signature']
+        required = ['sender', 'recipient', 'amount', 'signature', 'public_key']
         if not all(k in values for k in required):
             logging.warning("Missing values in request")
             return 'Missing values', 400
-
-        # Add transaction
+        
+        # Siapkan pesan untuk validasi tanda tangan
+        message = f"{values['sender']}{values['recipient']}{values['amount']}"
+        
+        # Validasi tanda tangan
+        if not verify_signature(values['public_key'], message, values['signature']):
+            logging.error("Invalid signature")
+            return 'Invalid signature', 400
+        
+        # Tambah transaksi
         index = blockchain.new_transaction(
-            values['sender'],
-            values['recipient'],
-            values['amount'],
-            values['public_key'],
-            values.get('private_key'),  # Make private_key optional
-            values['signature']
+            sender=values['sender'],
+            recipient=values['recipient'],
+            amount=values['amount'],
+            signature=values['signature'],
+            public_key=values['public_key'],
+            fee=values.get('fee', 5)  # default fee is 5
         )
 
         # Dapatkan saldo terkini untuk pengirim setelah transaksi
@@ -98,6 +109,16 @@ def full_chain():
         'chain': blockchain.chain,
         'length': len(blockchain.chain),
     }
+    return jsonify(response), 200
+
+@app.route('/balances', methods=['GET'])
+def balances():
+    response = blockchain.balances
+    return jsonify(response), 200
+
+@app.route('/mempool', methods=['GET'])
+def get_mempool():
+    response = blockchain.mempool
     return jsonify(response), 200
 
 @app.route('/nodes/register', methods=['POST'])
@@ -137,7 +158,7 @@ def consensus():
 @app.route('/balance/<address>', methods=['GET'])
 def get_balance(address):
     balance = blockchain.balances.get(address, 0)
-    public_key = blockchain.public_keys.get(address, 'N/A')
+    public_key = blockchain.public_keys.get(address)
     response = {
         'address': address,
         'balance': balance,
