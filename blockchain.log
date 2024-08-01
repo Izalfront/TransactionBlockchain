@@ -1,31 +1,89 @@
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 818-927-655
 WARNING:werkzeug: * Running on all addresses.
    WARNING: This is a development server. Do not use it in a production deployment.
 INFO:werkzeug: * Running on http://192.168.100.135:5000/ (Press CTRL+C to quit)
-INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'fee': 5, 'signature': '61acf4074ed8df281b188176449c033d17765af5a2de1c0f9fad792f4697a22f0baa08610c0ca5d18ac88b399f85b77ef4948a78946ce90a56e0bb8adccec300', 'public_key': '30e5a8bf14234a70af79b11271ff0c0f822e7dbcaa50a1db697ca2482ecf257ee2f73ea313e86fa3ca7fc0d0196ce9b20b3881cd675335a8aa8870a6ea36878f'}
-INFO:root:Message to verify: user1user250
-INFO:root:Public key: 30e5a8bf14234a70af79b11271ff0c0f822e7dbcaa50a1db697ca2482ecf257ee2f73ea313e86fa3ca7fc0d0196ce9b20b3881cd675335a8aa8870a6ea36878f
-INFO:root:Signature: 61acf4074ed8df281b188176449c033d17765af5a2de1c0f9fad792f4697a22f0baa08610c0ca5d18ac88b399f85b77ef4948a78946ce90a56e0bb8adccec300
-INFO:root:New transaction: sender=user1, recipient=user2, public_key=30e5a8bf14234a70af79b11271ff0c0f822e7dbcaa50a1db697ca2482ecf257ee2f73ea313e86fa3ca7fc0d0196ce9b20b3881cd675335a8aa8870a6ea36878f
-ERROR:root:Error in new_transaction: Invalid signature
-INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:41:14] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 500 -
-INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'signature': '61acf4074ed8df281b188176449c033d17765af5a2de1c0f9fad792f4697a22f0baa08610c0ca5d18ac88b399f85b77ef4948a78946ce90a56e0bb8adccec300', 'public_key': '30e5a8bf14234a70af79b11271ff0c0f822e7dbcaa50a1db697ca2482ecf257ee2f73ea313e86fa3ca7fc0d0196ce9b20b3881cd675335a8aa8870a6ea36878f'}
-INFO:root:Message to verify: user1user250
-INFO:root:Public key: 30e5a8bf14234a70af79b11271ff0c0f822e7dbcaa50a1db697ca2482ecf257ee2f73ea313e86fa3ca7fc0d0196ce9b20b3881cd675335a8aa8870a6ea36878f
-INFO:root:Signature: 61acf4074ed8df281b188176449c033d17765af5a2de1c0f9fad792f4697a22f0baa08610c0ca5d18ac88b399f85b77ef4948a78946ce90a56e0bb8adccec300
-INFO:root:New transaction: sender=user1, recipient=user2, public_key=30e5a8bf14234a70af79b11271ff0c0f822e7dbcaa50a1db697ca2482ecf257ee2f73ea313e86fa3ca7fc0d0196ce9b20b3881cd675335a8aa8870a6ea36878f
-ERROR:root:Error in new_transaction: Invalid signature
-INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:41:34] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 500 -
-INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'signature': '61acf4074ed8df281b188176449c033d17765af5a2de1c0f9fad792f4697a22f0baa08610c0ca5d18ac88b399f85b77ef4948a78946ce90a56e0bb8adccec300', 'public_key': '30e5a8bf14234a70af79b11271ff0c0f822e7dbcaa50a1db697ca2482ecf257ee2f73ea313e86fa3ca7fc0d0196ce9b20b3881cd675335a8aa8870a6ea36878f'}
-INFO:root:Message to verify: user1user250
-INFO:root:Public key: 30e5a8bf14234a70af79b11271ff0c0f822e7dbcaa50a1db697ca2482ecf257ee2f73ea313e86fa3ca7fc0d0196ce9b20b3881cd675335a8aa8870a6ea36878f
-INFO:root:Signature: 61acf4074ed8df281b188176449c033d17765af5a2de1c0f9fad792f4697a22f0baa08610c0ca5d18ac88b399f85b77ef4948a78946ce90a56e0bb8adccec300
-INFO:root:New transaction: sender=user1, recipient=user2, public_key=30e5a8bf14234a70af79b11271ff0c0f822e7dbcaa50a1db697ca2482ecf257ee2f73ea313e86fa3ca7fc0d0196ce9b20b3881cd675335a8aa8870a6ea36878f
-ERROR:root:Error in new_transaction: Invalid signature
-INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:41:36] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 500 -
 INFO:root:Mining endpoint called
-INFO:root:New transaction: sender=0, recipient=74bda7ddebe544a6ade6bb6b86eea3e5, public_key=
-INFO:root:Transaction added: sender=0, recipient=74bda7ddebe544a6ade6bb6b86eea3e5, amount=1
-INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 2, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'signature': '61acf4074ed8df281b188176449c033d17765af5a2de1c0f9fad792f4697a22f0baa08610c0ca5d18ac88b399f85b77ef4948a78946ce90a56e0bb8adccec300', 'public_key': '30e5a8bf14234a70af79b11271ff0c0f822e7dbcaa50a1db697ca2482ecf257ee2f73ea313e86fa3ca7fc0d0196ce9b20b3881cd675335a8aa8870a6ea36878f', 'fee': 5}, {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'signature': '61acf4074ed8df281b188176449c033d17765af5a2de1c0f9fad792f4697a22f0baa08610c0ca5d18ac88b399f85b77ef4948a78946ce90a56e0bb8adccec300', 'public_key': '30e5a8bf14234a70af79b11271ff0c0f822e7dbcaa50a1db697ca2482ecf257ee2f73ea313e86fa3ca7fc0d0196ce9b20b3881cd675335a8aa8870a6ea36878f', 'fee': 5}, {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'signature': '61acf4074ed8df281b188176449c033d17765af5a2de1c0f9fad792f4697a22f0baa08610c0ca5d18ac88b399f85b77ef4948a78946ce90a56e0bb8adccec300', 'public_key': '30e5a8bf14234a70af79b11271ff0c0f822e7dbcaa50a1db697ca2482ecf257ee2f73ea313e86fa3ca7fc0d0196ce9b20b3881cd675335a8aa8870a6ea36878f', 'fee': 5}, {'sender': '0', 'recipient': '74bda7ddebe544a6ade6bb6b86eea3e5', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': '74bda7ddebe544a6ade6bb6b86eea3e5', 'amount': 1, 'fee': 5, 'timestamp': 1722440514.5414224, 'nonce': '538dffd70fad44998ffe6449e35d1903', 'signature': ''}], 'proof': 35293, 'previous_hash': 'a7a607fad1be3ac71eada355fb893e6d810e0156db9051adc356015044e0b8cd'}
-INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:41:54] "GET /mine HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:42:09] "GET /chain HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [31/Jul/2024 23:42:24] "GET /balance/user2 HTTP/1.1" 200 -
+INFO:root:New transaction: sender=0, recipient=893c9f77625f48b483c4405ae57cb6b5, public_key=
+INFO:root:Generated public key for 893c9f77625f48b483c4405ae57cb6b5: 85ed5a0fd8a390adc33273057f8b37e12a456a5949ccb64c090122e119b77257213bd2ed25c3bcc013c7cec6fd5e6a0b497cec79dbada32f680f4388b913ffc6
+INFO:root:Transaction added: sender=0, recipient=893c9f77625f48b483c4405ae57cb6b5, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 2, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': '893c9f77625f48b483c4405ae57cb6b5', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': '893c9f77625f48b483c4405ae57cb6b5', 'amount': 1, 'fee': 5, 'timestamp': 1722480847.7191527, 'nonce': '99fbb1b818ed44989efae26fb29e9d35', 'signature': ''}], 'proof': 35293, 'previous_hash': '9a0a29b47940f4778aa7cb61bea331cd933f3301efca0190fae9637905fecacc'}
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:54:07] "GET /mine HTTP/1.1" 200 -
+INFO:root:Mining endpoint called
+INFO:root:New transaction: sender=0, recipient=893c9f77625f48b483c4405ae57cb6b5, public_key=
+INFO:root:Transaction added: sender=0, recipient=893c9f77625f48b483c4405ae57cb6b5, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 3, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': '893c9f77625f48b483c4405ae57cb6b5', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': '893c9f77625f48b483c4405ae57cb6b5', 'amount': 1, 'fee': 5, 'timestamp': 1722480849.9179509, 'nonce': '0281311c698f4743aa797cdf5f5f6796', 'signature': ''}], 'proof': 35089, 'previous_hash': '7917405db4a7469bcda5ede76ab354ec30d65979d830b1b2a51eebae3e6ab7e8'}
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:54:09] "GET /mine HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:54:13] "GET /chain HTTP/1.1" 200 -
+INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'signature': '3014fc45709caf2fa3d6d35c4b8b6efe5b215e814c62d03ee93afa4361ef7180411c7db08f0bd16d0861f3bfe6d5f6c69056e67abb580d4ff8a5aac9ae4069cc', 'public_key': 'c292b797313847219280d3b940b70b5035b846c9675bda4911b528c885b29386290d96b9953d265066c88f06fce5a9f7ad663e005eae2bc9a5129428cdfcc907'}
+INFO:root:Message to verify: user1user250
+INFO:root:Public key: c292b797313847219280d3b940b70b5035b846c9675bda4911b528c885b29386290d96b9953d265066c88f06fce5a9f7ad663e005eae2bc9a5129428cdfcc907
+INFO:root:Signature: 3014fc45709caf2fa3d6d35c4b8b6efe5b215e814c62d03ee93afa4361ef7180411c7db08f0bd16d0861f3bfe6d5f6c69056e67abb580d4ff8a5aac9ae4069cc
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:54:18] "[31m[1mPOST /transactions/new HTTP/1.1[0m" 400 -
+INFO:root:Balance check for user1: {'address': 'user1', 'balance': 1000, 'public_key': 'Not found'}
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:54:24] "GET /balance/user1 HTTP/1.1" 200 -
+INFO:root:Balance check for user1: {'address': 'user1', 'balance': 1000, 'public_key': 'Not found'}
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:54:26] "GET /balance/user1 HTTP/1.1" 200 -
+INFO:root:Balance check for user2: {'address': 'user2', 'balance': 500, 'public_key': 'Not found'}
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:54:32] "GET /balance/user2 HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'C:\\xampp\\htdocs\\basic_blockchain\\blockchain.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\xampp\\htdocs\\basic_blockchain\\blockchain.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\xampp\\htdocs\\basic_blockchain\\blockchain.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 818-927-655
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.135:5000/ (Press CTRL+C to quit)
+INFO:werkzeug: * Detected change in 'C:\\xampp\\htdocs\\basic_blockchain\\server.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\xampp\\htdocs\\basic_blockchain\\server.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 818-927-655
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.135:5000/ (Press CTRL+C to quit)
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 818-927-655
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.135:5000/ (Press CTRL+C to quit)
+INFO:root:Mining endpoint called
+INFO:root:New transaction: sender=0, recipient=3a4a81fd5c124c12b64d5332acf9c438, public_key=
+INFO:root:Generated public key for 3a4a81fd5c124c12b64d5332acf9c438: af74c775240c9ab72ac37b9b75a12d63c7ec3d6ddd7991ae988ffba6fd232889e684fa96d00ecfc94432cb2031777a3f63f050ff4f600d0b76da2effb5326ef0
+INFO:root:Transaction added: sender=0, recipient=3a4a81fd5c124c12b64d5332acf9c438, amount=1
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 2, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}, {'sender': '0', 'recipient': '3a4a81fd5c124c12b64d5332acf9c438', 'amount': 1, 'signature': '', 'public_key': '', 'fee': 5}, {'sender': '0', 'recipient': '3a4a81fd5c124c12b64d5332acf9c438', 'amount': 1, 'fee': 5, 'timestamp': 1722480958.80128, 'nonce': '63b7dc46948a48638c407453deaee4f3', 'signature': ''}], 'proof': 35293, 'previous_hash': 'cf24575017632294df93c310619c15c6937aec44479f548e5e6d145afd98d169'}
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:55:58] "GET /mine HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:56:01] "GET /chain HTTP/1.1" 200 -
+INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'signature': '3014fc45709caf2fa3d6d35c4b8b6efe5b215e814c62d03ee93afa4361ef7180411c7db08f0bd16d0861f3bfe6d5f6c69056e67abb580d4ff8a5aac9ae4069cc', 'public_key': 'c292b797313847219280d3b940b70b5035b846c9675bda4911b528c885b29386290d96b9953d265066c88f06fce5a9f7ad663e005eae2bc9a5129428cdfcc907'}
+INFO:root:Message to verify: user1user250
+INFO:root:Public key: c292b797313847219280d3b940b70b5035b846c9675bda4911b528c885b29386290d96b9953d265066c88f06fce5a9f7ad663e005eae2bc9a5129428cdfcc907
+INFO:root:Signature: 3014fc45709caf2fa3d6d35c4b8b6efe5b215e814c62d03ee93afa4361ef7180411c7db08f0bd16d0861f3bfe6d5f6c69056e67abb580d4ff8a5aac9ae4069cc
+INFO:root:Signature validation result: False
+ERROR:root:Invalid signature
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:56:03] "[31m[1mPOST /transactions/new HTTP/1.1[0m" 400 -
+INFO:root:Balance check for user2: {'address': 'user2', 'balance': 500, 'public_key': 'Not found'}
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:56:07] "GET /balance/user2 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:56:11] "GET /chain HTTP/1.1" 200 -
+INFO:root:Balance check for user2: {'address': 'user2', 'balance': 500, 'public_key': 'Not found'}
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:56:14] "GET /balance/user2 HTTP/1.1" 200 -
+INFO:root:Balance check for user1: {'address': 'user1', 'balance': 1000, 'public_key': 'Not found'}
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:56:18] "GET /balance/user1 HTTP/1.1" 200 -
+INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 50, 'signature': '3014fc45709caf2fa3d6d35c4b8b6efe5b215e814c62d03ee93afa4361ef7180411c7db08f0bd16d0861f3bfe6d5f6c69056e67abb580d4ff8a5aac9ae4069cc', 'public_key': 'c292b797313847219280d3b940b70b5035b846c9675bda4911b528c885b29386290d96b9953d265066c88f06fce5a9f7ad663e005eae2bc9a5129428cdfcc907'}
+INFO:root:Message to verify: user1user250
+INFO:root:Public key: c292b797313847219280d3b940b70b5035b846c9675bda4911b528c885b29386290d96b9953d265066c88f06fce5a9f7ad663e005eae2bc9a5129428cdfcc907
+INFO:root:Signature: 3014fc45709caf2fa3d6d35c4b8b6efe5b215e814c62d03ee93afa4361ef7180411c7db08f0bd16d0861f3bfe6d5f6c69056e67abb580d4ff8a5aac9ae4069cc
+INFO:root:Signature validation result: False
+ERROR:root:Invalid signature
+INFO:werkzeug:127.0.0.1 - - [01/Aug/2024 10:56:24] "[31m[1mPOST /transactions/new HTTP/1.1[0m" 400 -
+INFO:werkzeug: * Detected change in 'C:\\xampp\\htdocs\\basic_blockchain\\server.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\xampp\\htdocs\\basic_blockchain\\server.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\xampp\\htdocs\\basic_blockchain\\server.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 818-927-655
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.135:5000/ (Press CTRL+C to quit)

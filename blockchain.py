@@ -6,6 +6,7 @@ import json
 from time import time
 from uuid import uuid4
 from key_utils import verify_signature
+from key_utils import generate_keys
 import requests # type: ignore
 from cryptography.hazmat.primitives.asymmetric import rsa # type: ignore
 from cryptography.hazmat.primitives import serialization # type: ignore
@@ -142,6 +143,12 @@ class Blockchain:
         # Simpan kunci publik jika belum ada
         if sender not in self.public_keys and public_key:
             self.public_keys[sender] = public_key
+
+        # Jika recipient belum memiliki public key, generate one
+        if recipient not in self.public_keys:
+            private_key, new_public_key = generate_keys()
+            self.public_keys[recipient] = new_public_key
+            logging.info(f"Generated public key for {recipient}: {new_public_key}")
 
         if recipient not in self.balances:
             self.balances[recipient] = 0

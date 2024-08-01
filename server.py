@@ -78,7 +78,10 @@ def new_transaction():
         logging.info(f"Signature: {values['signature']}")
                 
         # Validasi tanda tangan
-        if not verify_signature(values['public_key'], message, values['signature']):
+        is_valid = verify_signature(values['public_key'], message, values['signature'])
+        logging.info(f"Signature validation result: {is_valid}")
+        
+        if not is_valid:
             logging.error("Invalid signature")
             return 'Invalid signature', 400
         
@@ -86,7 +89,7 @@ def new_transaction():
         index = blockchain.new_transaction(
             sender=values['sender'],
             recipient=values['recipient'],
-            amount=values['amount'],
+            amount=int(values['amount']),
             signature=values['signature'],
             public_key=values['public_key'],
             fee=values.get('fee', 5)  # default fee is 5
@@ -178,4 +181,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     port = args.port
 
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
