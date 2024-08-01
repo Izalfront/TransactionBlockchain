@@ -12,6 +12,16 @@ from key_utils import verify_signature
 # Konfigurasi logging
 logging.basicConfig(filename='blockchain.log', level=logging.INFO)
 
+# Exceptions
+class InsufficientFundsError(Exception):
+    pass
+
+class InvalidTransactionError(Exception):
+    pass
+
+class InvalidSignatureError(Exception):
+    pass
+
 # Setup Flask app
 app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app)
@@ -71,19 +81,19 @@ def new_transaction():
             logging.warning("Missing values in request")
             return 'Missing values', 400
         
-        # Siapkan pesan untuk validasi tanda tangan
-        message = f"{values['sender']}{values['recipient']}{values['amount']}"
-        logging.info(f"Message to verify: {message}")
-        logging.info(f"Public key: {values['public_key']}")
-        logging.info(f"Signature: {values['signature']}")
+        # # Siapkan pesan untuk validasi tanda tangan
+        # message = f"{values['sender']}{values['recipient']}{values['amount']}"
+        # logging.info(f"Message to verify: {message}")
+        # logging.info(f"Public key: {values['public_key']}")
+        # logging.info(f"Signature: {values['signature']}")
                 
-        # Validasi tanda tangan
-        is_valid = verify_signature(values['public_key'], message, values['signature'])
-        logging.info(f"Signature validation result: {is_valid}")
+        # # Validasi tanda tangan
+        # is_valid = verify_signature(values['public_key'], message, values['signature'])
+        # logging.info(f"Signature validation result: {is_valid}")
         
-        if not is_valid:
-            logging.error("Invalid signature")
-            return 'Invalid signature', 400
+        # if not is_valid:
+        #     logging.error("Invalid signature")
+        #     return 'Invalid signature', 400
         
         # Tambah transaksi
         index = blockchain.new_transaction(
@@ -105,6 +115,12 @@ def new_transaction():
         }
         return jsonify(response), 201
 
+    except InvalidTransactionError  as e:
+        logging.error(f"Invalid transaction: {str(e)}")
+        return jsonify({'error': str(e)}), 400
+    except InsufficientFundsError as e:
+        logging.error(f"Insufficient funds: {str(e)}")
+        return jsonify({'error': str(e)}), 400
     except Exception as e:
         logging.error(f"Error in new_transaction: {str(e)}")
         return jsonify({'error': str(e)}), 500

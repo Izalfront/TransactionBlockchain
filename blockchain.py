@@ -123,22 +123,16 @@ class Blockchain:
         amount = int(amount)
         fee = int(fee) 
 
-        if sender != '0':  
-            total_amount = amount + fee
-            if sender not in self.balances or self.balances[sender] < total_amount:
-                raise InsufficientFundsError(f"Sender {sender} has insufficient funds")
-            self.balances[sender] -= total_amount
-
-        logging.info(f"New transaction: sender={sender}, recipient={recipient}, public_key={public_key}")
-        #Tambahkan transaksi ke daftar transaksi saat ini
-        self.current_transactions.append({
-            'sender': sender,
-            'recipient': recipient,
-            'amount': amount,
-            'signature': signature,
-            'public_key': public_key,
-            'fee': fee
-        })
+        # logging.info(f"New transaction: sender={sender}, recipient={recipient}, public_key={public_key}")
+        # #Tambahkan transaksi ke daftar transaksi saat ini
+        # self.current_transactions.append({
+        #     'sender': sender,
+        #     'recipient': recipient,
+        #     'amount': amount,
+        #     'signature': signature,
+        #     'public_key': public_key,
+        #     'fee': fee
+        # })
 
         # Simpan kunci publik jika belum ada
         if sender not in self.public_keys and public_key:
@@ -148,26 +142,35 @@ class Blockchain:
         if recipient not in self.public_keys:
             private_key, new_public_key = generate_keys()
             self.public_keys[recipient] = new_public_key
-            logging.info(f"Generated public key for {recipient}: {new_public_key}")
+            logging.info(f"Generated public key for {recipient}: {new_public_key}") 
+
+        transaction = {
+            'sender': sender,
+            'recipient': recipient,
+            'amount': amount,
+            'signature': signature,
+            'public_key': public_key,
+            'fee': fee,
+            'timestamp': time(),
+            'nonce': uuid4().hex,     
+        }
+
+        if not self.validate_transaction(transaction):
+            raise InvalidTransactionError("Invalid transaction")
+        
+        if sender != '0':  
+            total_amount = amount + fee
+            if sender not in self.balances or self.balances[sender] < total_amount:
+                raise InsufficientFundsError(f"Sender {sender} has insufficient funds")
+            self.balances[sender] -= total_amount
+
+        logging.info(f"New transaction: {transaction}")
 
         if recipient not in self.balances:
             self.balances[recipient] = 0
         self.balances[recipient] += amount
 
         self.balances[self.node_identifier] += fee
-
-        transaction = {
-            'sender': sender,
-            'recipient': recipient,
-            'amount': amount,
-            'fee': fee,
-            'timestamp': time(),
-            'nonce': uuid4().hex,
-            'signature': signature
-        }
-
-        if not self.validate_transaction(transaction):
-            raise InvalidTransactionError("Invalid transaction")
     
         if self.current_block and len(self.current_block['transactions']) < self.max_transactions_per_block:
             self.current_block['transactions'].append(transaction)
@@ -179,7 +182,7 @@ class Blockchain:
         return self.last_block['index'] + 1
 
     def validate_transaction(self, transaction):
-        if not all(k in transaction for k in ["sender", "recipient", "amount", "signature"]):
+        if not all(k in transaction for k in ["sender", "recipient", "amount", "signature", "public_key"]):
             return False
         if not isinstance(transaction['amount'], (int, float)) or transaction['amount'] <= 0:
             return False
@@ -188,9 +191,11 @@ class Blockchain:
     
         # Validasi tanda tangan
         if transaction['sender'] != '0':  # Abaikan validasi tanda tangan untuk transaksi coinbase
-            public_key = self.public_keys.get(transaction['sender'])
-            if not public_key or not verify_signature(public_key, transaction, transaction['signature']):
-                raise InvalidSignatureError("Invalid signature")
+            public_key = transaction['public_key']
+            message = f"{transaction['sender']}{transaction['recipient']}{transaction['amount']}"
+            if not verify_signature(public_key, message, transaction['signature']):
+                logging.error(f"Invalid signature for transaction: {transaction}")
+                return False
     
         return True
 
