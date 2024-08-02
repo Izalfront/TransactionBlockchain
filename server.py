@@ -36,14 +36,20 @@ blockchain = Blockchain()
 def mine():
     logging.info('Mining endpoint called')
     try:
-        # Mendapatkan blok terakhir dan proof terakhir
+        if len(blockchain.chain) == 0:
+            raise IndexError('Blockchain is empty')
+        
         last_block = blockchain.last_block
         last_proof = last_block['proof']
-        
-        # Menyelesaikan proof of work untuk blok baru
+
+        # Proses transaksi dari mempool jika ada ruang di blok saat ini
+        while blockchain.current_block and len(blockchain.current_block['transactions']) < blockchain.max_transactions_per_block and blockchain.mempool:
+            transaction = blockchain.mempool.pop(0)
+            blockchain.current_block['transactions'].append(transaction)
+
+        # Mining proof-of-work
         proof = blockchain.proof_of_work(last_proof)
 
-        # Menambahkan transaksi baru (reward untuk mining)
         blockchain.new_transaction(
             sender="0",
             recipient=node_identifier,
@@ -52,11 +58,9 @@ def mine():
             public_key=''
         )
 
-        # Membuat blok baru
         previous_hash = blockchain.hash(last_block)
         block = blockchain.new_block(proof, previous_hash)
 
-        # Membuat respons
         response = {
             'message': "New Block Forged",
             'index': block['index'],
@@ -66,9 +70,12 @@ def mine():
         }
         logging.info(f'Mining successful: {response}')
         return jsonify(response), 200
+    except IndexError:
+        logging.error('Error: Blockchain is empty')
+        return jsonify({'message': 'Blockchain is empty'}), 500
     except Exception as e:
-        logging.error(f'Error during mining: {e}')
-        return jsonify({'message': 'Internal server error'}), 500
+        logging.error(f'Error during mining: {str(e)}')
+        return jsonify({'message': f'Error during mining: {str(e)}'}), 500
 
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
@@ -80,20 +87,6 @@ def new_transaction():
         if not all(k in values for k in required):
             logging.warning("Missing values in request")
             return 'Missing values', 400
-        
-        # # Siapkan pesan untuk validasi tanda tangan
-        # message = f"{values['sender']}{values['recipient']}{values['amount']}"
-        # logging.info(f"Message to verify: {message}")
-        # logging.info(f"Public key: {values['public_key']}")
-        # logging.info(f"Signature: {values['signature']}")
-                
-        # # Validasi tanda tangan
-        # is_valid = verify_signature(values['public_key'], message, values['signature'])
-        # logging.info(f"Signature validation result: {is_valid}")
-        
-        # if not is_valid:
-        #     logging.error("Invalid signature")
-        #     return 'Invalid signature', 400
         
         # Tambah transaksi
         index = blockchain.new_transaction(

@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     sender = "user1"
     recipient = "user2"
-    amount = 50
+    amount = 5
     message = f"{sender}{recipient}{amount}"
 
     signature = create_signature(private_key, message)

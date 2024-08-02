@@ -52,6 +52,7 @@ class Blockchain:
         self.pruned_blocks = {}
         self.contracts = {}
         self.current_block = None
+        # self.current_block = {'transactions': []}
         self.create_new_block(previous_hash='1', proof=100)
         self.max_transactions_per_block = 5
 
@@ -61,7 +62,7 @@ class Blockchain:
         self.balances[self.node_identifier] = 5
         # Inisialisasi saldo awal untuk pengguna tambahan
         self.balances['user1'] = 1000
-        self.balances['user2'] = 500
+        self.balances['user2'] = 5000
 
     def prune(self, index):
         if index > 1:
@@ -80,6 +81,7 @@ class Blockchain:
             'previous_hash': previous_hash or self.hash(self.chain[-1]),
             'merkle_root': None
         }
+
         self.current_block = block
         return block
     
@@ -123,17 +125,6 @@ class Blockchain:
         amount = int(amount)
         fee = int(fee) 
 
-        # logging.info(f"New transaction: sender={sender}, recipient={recipient}, public_key={public_key}")
-        # #Tambahkan transaksi ke daftar transaksi saat ini
-        # self.current_transactions.append({
-        #     'sender': sender,
-        #     'recipient': recipient,
-        #     'amount': amount,
-        #     'signature': signature,
-        #     'public_key': public_key,
-        #     'fee': fee
-        # })
-
         # Simpan kunci publik jika belum ada
         if sender not in self.public_keys and public_key:
             self.public_keys[sender] = public_key
@@ -169,12 +160,17 @@ class Blockchain:
         if recipient not in self.balances:
             self.balances[recipient] = 0
         self.balances[recipient] += amount
-
         self.balances[self.node_identifier] += fee
     
+        # Tambahkan transaksi ke blok yang ada jika belum penuh
         if self.current_block and len(self.current_block['transactions']) < self.max_transactions_per_block:
             self.current_block['transactions'].append(transaction)
         else:
+            # Jika blok saat ini penuh atau tidak ada blok saat ini, simpan transaksi di mempool
+            self.mempool.append(transaction)
+
+        # Selalu tambahkan transaksi ke mempool jika blok tidak tersedia
+        if not self.current_block:
             self.mempool.append(transaction)
 
         self.current_transactions.append(transaction)
@@ -217,7 +213,7 @@ class Blockchain:
 
     def initialize_balances(self):
         self.new_transaction(sender='0', recipient='user1', amount=1000, signature='') 
-        self.new_transaction(sender='0', recipient='user2', amount=500, signature='') 
+        self.new_transaction(sender='0', recipient='user2', amount=5000, signature='') 
         last_proof = self.last_block['proof']
         proof = self.proof_of_work(last_proof)
         self.new_block(proof)
@@ -229,7 +225,7 @@ class Blockchain:
 
     @property
     def last_block(self):
-        return self.chain[-1]
+        return self.chain[-1] if self.chain else None
 
     def proof_of_work(self, last_proof):
         proof = 0
