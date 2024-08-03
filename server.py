@@ -36,30 +36,9 @@ blockchain = Blockchain()
 def mine():
     logging.info('Mining endpoint called')
     try:
-        if len(blockchain.chain) == 0:
-            raise IndexError('Blockchain is empty')
-        
-        last_block = blockchain.last_block
-        last_proof = last_block['proof']
-
-        # Proses transaksi dari mempool jika ada ruang di blok saat ini
-        while blockchain.current_block and len(blockchain.current_block['transactions']) < blockchain.max_transactions_per_block and blockchain.mempool:
-            transaction = blockchain.mempool.pop(0)
-            blockchain.current_block['transactions'].append(transaction)
-
-        # Mining proof-of-work
-        proof = blockchain.proof_of_work(last_proof)
-
-        blockchain.new_transaction(
-            sender="0",
-            recipient=node_identifier,
-            amount=1,
-            signature='',
-            public_key=''
-        )
-
-        previous_hash = blockchain.hash(last_block)
-        block = blockchain.new_block(proof, previous_hash)
+        block = blockchain.mine()
+        if block is None:
+            return jsonify({'message': 'No transactions to mine'}), 200
 
         response = {
             'message': "New Block Forged",
@@ -70,9 +49,6 @@ def mine():
         }
         logging.info(f'Mining successful: {response}')
         return jsonify(response), 200
-    except IndexError:
-        logging.error('Error: Blockchain is empty')
-        return jsonify({'message': 'Blockchain is empty'}), 500
     except Exception as e:
         logging.error(f'Error during mining: {str(e)}')
         return jsonify({'message': f'Error during mining: {str(e)}'}), 500

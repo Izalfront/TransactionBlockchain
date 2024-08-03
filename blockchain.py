@@ -52,12 +52,10 @@ class Blockchain:
         self.pruned_blocks = {}
         self.contracts = {}
         self.current_block = None
-        # self.current_block = {'transactions': []}
-        self.create_new_block(previous_hash='1', proof=100)
-        self.max_transactions_per_block = 5
+        self.last_index = 0     
+        self.max_transactions_per_block = 5   
+        self.create_genesis_block()
 
-        # Buat genesis block
-        self.new_block(previous_hash='1', proof=100)
         # Inisialisasi saldo miner dengan reward dari genesis block
         self.balances[self.node_identifier] = 5
         # Inisialisasi saldo awal untuk pengguna tambahan
@@ -72,64 +70,59 @@ class Blockchain:
         else:
             logging.warning("Cannot prune to index less than or equal to 1")
 
-    def create_new_block(self, proof, previous_hash=None):
+    def create_genesis_block(self):
+        if not self.chain:
+            genesis_block = self.new_block(proof=100, previous_hash='1', is_genesis=True)
+            logging.info("Genesis block created")
+
+    def new_block(self, proof, previous_hash=None, is_genesis=False):
+        self.last_index += 1  # Increment indeks
+
         block = {
-            'index': len(self.chain) + 1,
+            'index': self.last_index,
             'timestamp': time(),
             'transactions': [],
             'proof': proof,
             'previous_hash': previous_hash or self.hash(self.chain[-1]),
-            'merkle_root': None
         }
-
-        self.current_block = block
-        return block
     
-    def new_block(self, proof, previous_hash=None):
-        if self.current_block is None or 'transactions' not in self.current_block:
-            self.create_new_block(proof, previous_hash)
-    
-        # Finalisasi blok saat ini
-        self.current_block['merkle_root'] = self.merkle_root(self.current_block['transactions'])
+        if not is_genesis:
+            # Pindahkan transaksi dari mempool ke blok baru
+            while len(block['transactions']) < self.max_transactions_per_block and self.mempool:
+                block['transactions'].append(self.mempool.pop(0))
 
-        transactions = [
-            {
-                'sender': '0',  # Penanda untuk transaksi Coinbase
-                'recipient': self.node_identifier,  # Alamat miner
-                'amount': 5,   # Hadiah blok, misalnya 5 unit cryptocurrency
+            # Tambahkan coinbase transaction
+            coinbase_transaction = {
+                'sender': '0',
+                'recipient': self.node_identifier,
+                'amount': 5,
             }
-        ] + self.current_transactions
+            block['transactions'].insert(0, coinbase_transaction)
 
-        block = {
-            'index': len(self.chain) + 1,
-            'timestamp': time(),
-            'transactions': transactions,
-            'proof': proof,
-            'previous_hash': previous_hash or self.hash(self.chain[-1]),
-            'merkle_root': self.merkle_root(self.current_transactions)
-        }
-
-        self.current_transactions = []
         self.chain.append(block)
-
         self.supply += 5
         if self.supply > self.initial_supply:
             raise Exception("Total supply exceeded the maximum limit")
 
         if len(self.chain) > 1000:
-            self.prune(len(self.chain) - 1000) # Menyimpan 1000 blok terakhir
-            
-        return block    
-    
+            self.prune(len(self.chain) - 1000)
+
+        block['merkle_root'] = self.merkle_root(block['transactions'])
+        self.current_block = block  # Set current_block ke blok baru
+        return block
+
+    def finalize_current_block(self):
+        if self.current_block and self.current_block['transactions']:
+            self.chain.append(self.current_block)
+            self.current_block = None
+
     def new_transaction(self, sender, recipient, amount, signature, public_key, fee=5):
         amount = int(amount)
         fee = int(fee) 
 
-        # Simpan kunci publik jika belum ada
         if sender not in self.public_keys and public_key:
             self.public_keys[sender] = public_key
 
-        # Jika recipient belum memiliki public key, generate one
         if recipient not in self.public_keys:
             private_key, new_public_key = generate_keys()
             self.public_keys[recipient] = new_public_key
@@ -148,35 +141,61 @@ class Blockchain:
 
         if not self.validate_transaction(transaction):
             raise InvalidTransactionError("Invalid transaction")
-        
-        if sender != '0':  
-            total_amount = amount + fee
-            if sender not in self.balances or self.balances[sender] < total_amount:
-                raise InsufficientFundsError(f"Sender {sender} has insufficient funds")
-            self.balances[sender] -= total_amount
-
-        logging.info(f"New transaction: {transaction}")
-
-        if recipient not in self.balances:
-            self.balances[recipient] = 0
-        self.balances[recipient] += amount
-        self.balances[self.node_identifier] += fee
     
-        # Tambahkan transaksi ke blok yang ada jika belum penuh
+        # Cek apakah blok saat ini sudah penuh
         if self.current_block and len(self.current_block['transactions']) < self.max_transactions_per_block:
             self.current_block['transactions'].append(transaction)
         else:
-            # Jika blok saat ini penuh atau tidak ada blok saat ini, simpan transaksi di mempool
             self.mempool.append(transaction)
 
-        # Selalu tambahkan transaksi ke mempool jika blok tidak tersedia
-        if not self.current_block:
-            self.mempool.append(transaction)
+        # Update saldo
+        if sender != '0':
+            self.balances[sender] -= (amount + fee)
+        self.balances[recipient] = self.balances.get(recipient, 0) + amount
+        self.balances[self.node_identifier] = self.balances.get(self.node_identifier, 0) + fee
 
-        self.current_transactions.append(transaction)
-        logging.info(f"Transaction added: sender={sender}, recipient={recipient}, amount={amount}")
-        return self.last_block['index'] + 1
+        # Mengelola pembagian transaksi ke blok berikutnya jika mempool sudah penuh
+        if len(self.mempool) > 0 and len(self.current_block['transactions']) == self.max_transactions_per_block:
+            self.mine()  # Menambang blok baru untuk mengosongkan mempool
 
+        return self.last_index + 1
+
+    def mine(self):
+        last_block = self.chain[-1]
+        new_proof = self.proof_of_work(last_block['proof'])
+
+        # Buat blok baru
+        previous_hash = self.hash(last_block)
+        block = self.new_block(new_proof, previous_hash)
+
+        # Tambahkan blok ke chain
+        self.chain.append(block)
+        
+        # Bersihkan mempool dari transaksi yang sudah masuk ke blok
+        self.clean_mempool(block['transactions'])
+
+        # Tambahkan transaksi dari mempool ke blok berikutnya jika ada
+        while len(self.mempool) > 0:
+            new_proof = self.proof_of_work(last_block['proof'])
+            block = self.new_block(new_proof, previous_hash)
+            self.clean_mempool(block['transactions'])
+
+        return block
+
+    def add_block(chain, new_block):
+        if len(chain) == 0:
+            new_block['index'] = 1
+        else:
+            last_block = chain[-1]
+            new_block['index'] = last_block['index'] + 1
+    
+        chain.append(new_block)
+
+    def clean_mempool(self, processed_transactions):
+        # Hapus transaksi yang sudah diproses dari mempool
+        processed_tx_hashes = set(self.hash(tx) for tx in processed_transactions)
+        self.mempool = [tx for tx in self.mempool if self.hash(tx) not in processed_tx_hashes]
+    
     def validate_transaction(self, transaction):
         if not all(k in transaction for k in ["sender", "recipient", "amount", "signature", "public_key"]):
             return False
@@ -212,8 +231,8 @@ class Blockchain:
         return hashlib.sha256(f'{left}{right}'.encode()).hexdigest()
 
     def initialize_balances(self):
-        self.new_transaction(sender='0', recipient='user1', amount=1000, signature='') 
-        self.new_transaction(sender='0', recipient='user2', amount=5000, signature='') 
+        self.new_transaction(sender='0', recipient='user1', amount=1000, signature='', public_key='', fee=0)
+        self.new_transaction(sender='0', recipient='user2', amount=5000, signature='', public_key='', fee=0)
         last_proof = self.last_block['proof']
         proof = self.proof_of_work(last_proof)
         self.new_block(proof)
