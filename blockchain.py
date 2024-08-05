@@ -169,7 +169,7 @@ class Blockchain:
         block = self.new_block(new_proof, previous_hash)
 
         # Tambahkan blok ke chain
-        self.chain.append(block)
+        # self.chain.append(block)
         
         # Bersihkan mempool dari transaksi yang sudah masuk ke blok
         self.clean_mempool(block['transactions'])
@@ -182,14 +182,14 @@ class Blockchain:
 
         return block
 
-    def add_block(chain, new_block):
-        if len(chain) == 0:
-            new_block['index'] = 1
-        else:
-            last_block = chain[-1]
-            new_block['index'] = last_block['index'] + 1
+    # def add_block(chain, new_block):
+    #     if len(chain) == 0:
+    #         new_block['index'] = 1
+    #     else:
+    #         last_block = chain[-1]
+    #         new_block['index'] = last_block['index'] + 1
     
-        chain.append(new_block)
+    #     chain.append(new_block)
 
     def clean_mempool(self, processed_transactions):
         # Hapus transaksi yang sudah diproses dari mempool
