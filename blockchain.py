@@ -2,6 +2,8 @@ import logging
 import binascii
 import ecdsa # type: ignore
 import hashlib
+import time
+import random
 import json
 from time import time
 from uuid import uuid4
@@ -28,26 +30,49 @@ class InvalidTransactionError(Exception):
 class InvalidSignatureError(Exception):
     pass
 
+class ConsensusError(Exception):
+    pass
+
 class SmartContract:
     def __init__(self, code):
         self.code = code
 
     def execute(self, blockchain, transaction):
-        # Ini adalah implementasi yang sangat sederhana dan tidak aman
-        local_vars = {'blockchain': blockchain, 'transaction': transaction}
-        exec(self.code, {}, local_vars)
-        return local_vars.get('result', None)
+        if not self.validate_code(self.code):
+            raise InvalidTransactionError("Invalid smart contract code")
+
+        safe_globals = {
+            'blockchain': blockchain,
+            'transaction': transaction,
+            'math': __import__('math'),
+        }
+        safe_locals = {}
+
+        try:
+            exec(self.code, safe_globals, safe_locals)
+            return safe_locals.get('result', None)
+        except Exception as e:
+            logging.error(f"Smart contract execution failed: {e}")
+            return None
+
+    def validate_code(self, code):
+        restricted_keywords = ['import', 'exec', 'eval', 'open', 'os', 'sys', 'subprocess']
+        for keyword in restricted_keywords:
+            if keyword in code:
+                logging.error(f"Smart contract code contains restricted keyword: {keyword}")
+                return False
+        return True
 
 class Blockchain:
     def __init__(self):
         self.chain = []
         self.current_transactions = []
         self.nodes = set()
-        self.balances = {}  # Menyimpan saldo pengguna
-        self.public_keys = {}  # Menyimpan kunci publik pengguna
-        self.node_identifier = '0xf80001110110'  # alamat miner
-        self.initial_supply = 21000000  # Misalkan supply maksimum
-        self.supply = 1000  # Supply saat ini
+        self.balances = {}  
+        self.public_keys = {}  
+        self.node_identifier = '0xf80001110110'  
+        self.initial_supply = 21000000  
+        self.supply = 1000  
         self.mempool = []
         self.pruned_blocks = {}
         self.contracts = {}
@@ -59,8 +84,8 @@ class Blockchain:
         # Inisialisasi saldo miner dengan reward dari genesis block
         self.balances[self.node_identifier] = 5
         # Inisialisasi saldo awal untuk pengguna tambahan
-        self.balances['user1'] = 1000
-        self.balances['user2'] = 5000
+        self.balances['user1'] = 10000
+        self.balances['user2'] = 50
 
     def prune(self, index):
         if index > 1:
@@ -141,7 +166,7 @@ class Blockchain:
 
         if not self.validate_transaction(transaction):
             raise InvalidTransactionError("Invalid transaction")
-    
+        
         # Cek apakah blok saat ini sudah penuh
         if self.current_block and len(self.current_block['transactions']) < self.max_transactions_per_block:
             self.current_block['transactions'].append(transaction)
@@ -167,9 +192,6 @@ class Blockchain:
         # Buat blok baru
         previous_hash = self.hash(last_block)
         block = self.new_block(new_proof, previous_hash)
-
-        # Tambahkan blok ke chain
-        # self.chain.append(block)
         
         # Bersihkan mempool dari transaksi yang sudah masuk ke blok
         self.clean_mempool(block['transactions'])
@@ -181,15 +203,6 @@ class Blockchain:
             self.clean_mempool(block['transactions'])
 
         return block
-
-    # def add_block(chain, new_block):
-    #     if len(chain) == 0:
-    #         new_block['index'] = 1
-    #     else:
-    #         last_block = chain[-1]
-    #         new_block['index'] = last_block['index'] + 1
-    
-    #     chain.append(new_block)
 
     def clean_mempool(self, processed_transactions):
         # Hapus transaksi yang sudah diproses dari mempool
@@ -205,7 +218,7 @@ class Blockchain:
             return False
     
         # Validasi tanda tangan
-        if transaction['sender'] != '0':  # Abaikan validasi tanda tangan untuk transaksi coinbase
+        if transaction['sender'] != '0':
             public_key = transaction['public_key']
             message = f"{transaction['sender']}{transaction['recipient']}{transaction['amount']}"
             if not verify_signature(public_key, message, transaction['signature']):
@@ -231,8 +244,8 @@ class Blockchain:
         return hashlib.sha256(f'{left}{right}'.encode()).hexdigest()
 
     def initialize_balances(self):
-        self.new_transaction(sender='0', recipient='user1', amount=1000, signature='', public_key='', fee=0)
-        self.new_transaction(sender='0', recipient='user2', amount=5000, signature='', public_key='', fee=0)
+        self.new_transaction(sender='0', recipient='user1', amount=10000, signature='', public_key='', fee=0)
+        self.new_transaction(sender='0', recipient='user2', amount=50, signature='', public_key='', fee=0)
         last_proof = self.last_block['proof']
         proof = self.proof_of_work(last_proof)
         self.new_block(proof)
@@ -304,8 +317,70 @@ class Blockchain:
         self.nodes.add(address)
 
     def consensus_algorithm(self):
-        replaced = self.resolve_conflicts()
-        if replaced:
-            logging.info("Our chain was replaced")
-        else:
-            logging.info("Our chain is authoritative")
+        try:
+            start_time = time.time()
+            max_attempts = 3
+            attempt = 0
+
+            while attempt < max_attempts:
+                replaced = self.resolve_conflicts()
+                
+                if replaced:
+                    logging.info("Our chain was replaced")
+                    self.validate_new_chain()
+                    self.update_mempool()
+                    self.broadcast_new_chain()
+                    return True
+                else:
+                    logging.info("Our chain is authoritative")
+                    if self.validate_local_chain():
+                        self.broadcast_chain_validity()
+                        return False
+                    else:
+                        logging.warning("Local chain validation failed. Retrying consensus...")
+                
+                attempt += 1
+                if attempt < max_attempts:
+                    wait_time = random.uniform(1, 5)
+                    time.sleep(wait_time)
+
+            if attempt == max_attempts:
+                raise ConsensusError("Failed to reach consensus after maximum attempts")
+
+        except Exception as e:
+            logging.error(f"Error in consensus algorithm: {str(e)}")
+            raise
+        finally:
+            end_time = time.time()
+            logging.info(f"Consensus algorithm took {end_time - start_time:.2f} seconds")
+
+    def validate_new_chain(self):
+        if not self.valid_chain(self.chain):
+            raise ConsensusError("Newly received chain is invalid")
+        logging.info("New chain validated successfully")
+
+    def update_mempool(self):
+        new_mempool = [tx for tx in self.mempool if not self.transaction_in_chain(tx)]
+        removed_count = len(self.mempool) - len(new_mempool)
+        self.mempool = new_mempool
+        logging.info(f"Updated mempool. Removed {removed_count} transactions.")
+
+    def broadcast_new_chain(self):
+        for node in self.nodes:
+            try:
+                logging.info(f"Broadcasting new chain to {node}")
+            except Exception as e:
+                logging.error(f"Failed to broadcast new chain to {node}: {str(e)}")
+
+    def validate_local_chain(self):
+        return self.valid_chain(self.chain)
+
+    def broadcast_chain_validity(self):
+        for node in self.nodes:
+            try:
+                logging.info(f"Broadcasting chain validity to {node}")
+            except Exception as e:
+                logging.error(f"Failed to broadcast chain validity to {node}: {str(e)}")
+
+    def transaction_in_chain(self, transaction):
+        return any(tx == transaction for block in self.chain for tx in block['transactions'])
