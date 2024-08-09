@@ -22,3 +22,41 @@ INFO:root:Mining endpoint called
 INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 2, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}], 'proof': 35293, 'previous_hash': 'e7dd4266e90acd1730ad13e946fe3f0f3b993bb853889d803504472def9bc456'}
 INFO:werkzeug:127.0.0.1 - - [09/Aug/2024 15:46:20] "GET /mine HTTP/1.1" 200 -
 INFO:werkzeug:127.0.0.1 - - [09/Aug/2024 15:46:24] "GET /chain HTTP/1.1" 200 -
+INFO:root:Genesis block created
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:root:Genesis block created
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 321-866-759
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.135:5000/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [09/Aug/2024 19:30:34] "GET /chain HTTP/1.1" 200 -
+INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 5, 'signature': 'af13f05b9c7bd5e0c7e8670aaa4f45c3adf700e24cdce45df8a926d4b66c038bd05726c8b7b0e845d3986ee457c5dbd954e0f7f74c29c7b1fe7295b012c7df41', 'public_key': 'f3a63184a598ec1949d79e93f57899f2adce0511d165d9127a03679dc5fd2ec31205c51554b4df342158d401f6ec3cafbeb59343477638babbb7fe8753bea26d'}
+INFO:root:Generated public key for user2: 37db2acc63c110ac84b9a1e6faf1a275d5e0da0e37c6b33c6d97b16a69359d4a7076687bbeb022dfbbcb2e8d43e8e8dd01c3dc9b45e0a4686848e1dd19789e2b
+INFO:werkzeug:127.0.0.1 - - [09/Aug/2024 19:30:38] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 5, 'signature': 'af13f05b9c7bd5e0c7e8670aaa4f45c3adf700e24cdce45df8a926d4b66c038bd05726c8b7b0e845d3986ee457c5dbd954e0f7f74c29c7b1fe7295b012c7df41', 'public_key': 'f3a63184a598ec1949d79e93f57899f2adce0511d165d9127a03679dc5fd2ec31205c51554b4df342158d401f6ec3cafbeb59343477638babbb7fe8753bea26d'}
+INFO:werkzeug:127.0.0.1 - - [09/Aug/2024 19:30:40] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:root:Received values: {'sender': 'user1', 'recipient': 'user2', 'amount': 5, 'signature': 'af13f05b9c7bd5e0c7e8670aaa4f45c3adf700e24cdce45df8a926d4b66c038bd05726c8b7b0e845d3986ee457c5dbd954e0f7f74c29c7b1fe7295b012c7df41', 'public_key': 'f3a63184a598ec1949d79e93f57899f2adce0511d165d9127a03679dc5fd2ec31205c51554b4df342158d401f6ec3cafbeb59343477638babbb7fe8753bea26d'}
+INFO:werkzeug:127.0.0.1 - - [09/Aug/2024 19:30:41] "[35m[1mPOST /transactions/new HTTP/1.1[0m" 201 -
+INFO:root:Mining endpoint called
+INFO:root:Mining successful: {'message': 'New Block Forged', 'index': 2, 'transactions': [{'sender': '0', 'recipient': '0xf80001110110', 'amount': 5}], 'proof': 35293, 'previous_hash': 'f70da9bcf808cba3ed2777403afc1b4ddeb03f42e682d80837b7a79de6da50ad'}
+INFO:werkzeug:127.0.0.1 - - [09/Aug/2024 19:30:45] "GET /mine HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [09/Aug/2024 19:30:48] "GET /chain HTTP/1.1" 200 -
+INFO:root:Genesis block created
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:root:Genesis block created
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 321-866-759
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.135:5000/ (Press CTRL+C to quit)
+INFO:werkzeug: * Detected change in 'C:\\xampp\\htdocs\\basic_blockchain\\tes.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:root:Genesis block created
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 321-866-759
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://192.168.100.135:5000/ (Press CTRL+C to quit)
+INFO:root:Genesis block created
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
