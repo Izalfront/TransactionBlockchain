@@ -1,12 +1,12 @@
-const hre = require('hardhat');
-
 async function main() {
-  const BlockchainInterface = await hre.ethers.getContractFactory('BlockchainInterface');
-  const blockchainInterface = await BlockchainInterface.deploy();
+  const [deployer] = await ethers.getSigners();
+  console.log('Deploying contracts with the account:', deployer.address);
 
-  await blockchainInterface.deployed();
+  const Lock = await ethers.getContractFactory('Lock');
+  const unlockTime = Math.floor(Date.now() / 1000) + 60 * 60; // 1 hour from now
+  const lock = await Lock.deploy(unlockTime, { value: ethers.utils.parseEther('1.0') });
 
-  console.log('BlockchainInterface deployed to:', blockchainInterface.address);
+  console.log('Lock contract deployed to:', lock.address);
 }
 
 main()

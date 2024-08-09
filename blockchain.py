@@ -5,6 +5,7 @@ import hashlib
 import time
 import random
 import json
+from web3 import Web3
 from time import time
 from uuid import uuid4
 from key_utils import verify_signature
@@ -33,35 +34,64 @@ class InvalidSignatureError(Exception):
 class ConsensusError(Exception):
     pass
 
-class SmartContract:
-    def __init__(self, code):
-        self.code = code
+# class SmartContract:
+#     def __init__(self, code):
+#         self.code = code
 
-    def execute(self, blockchain, transaction):
-        if not self.validate_code(self.code):
-            raise InvalidTransactionError("Invalid smart contract code")
+#     def execute(self, blockchain, transaction):
+#         if not self.validate_code(self.code):
+#             raise InvalidTransactionError("Invalid smart contract code")
 
-        safe_globals = {
-            'blockchain': blockchain,
-            'transaction': transaction,
-            'math': __import__('math'),
-        }
-        safe_locals = {}
+#         safe_globals = {
+#             'blockchain': blockchain,
+#             'transaction': transaction,
+#             'math': __import__('math'),
+#         }
+#         safe_locals = {}
 
+#         try:
+#             exec(self.code, safe_globals, safe_locals)
+#             return safe_locals.get('result', None)
+#         except Exception as e:
+#             logging.error(f"Smart contract execution failed: {e}")
+#             return None
+
+#     def validate_code(self, code):
+#         restricted_keywords = ['import', 'exec', 'eval', 'open', 'os', 'sys', 'subprocess']
+#         for keyword in restricted_keywords:
+#             if keyword in code:
+#                 logging.error(f"Smart contract code contains restricted keyword: {keyword}")
+#                 return False
+#         return True
+
+class SmartContractConnection:
+    def __init__(self, contract_address, abi):
+        self.w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
+        self.contract = self.w3.eth.contract(address=contract_address, abi=abi)
+
+    def call_function(self, function_name, *args):
+        function = self.contract.functions[function_name]
         try:
-            exec(self.code, safe_globals, safe_locals)
-            return safe_locals.get('result', None)
+            result = function(*args).call()
+            return result
         except Exception as e:
-            logging.error(f"Smart contract execution failed: {e}")
+            logging.error(f"Failed to call function {function_name}: {e}")
             return None
 
-    def validate_code(self, code):
-        restricted_keywords = ['import', 'exec', 'eval', 'open', 'os', 'sys', 'subprocess']
-        for keyword in restricted_keywords:
-            if keyword in code:
-                logging.error(f"Smart contract code contains restricted keyword: {keyword}")
-                return False
-        return True
+    def send_transaction(self, function_name, sender_address, sender_private_key, *args):
+        function = self.contract.functions[function_name]
+        try:
+            transaction = function(*args).buildTransaction({
+                'from': sender_address,
+                'nonce': self.w3.eth.getTransactionCount(sender_address),
+            })
+            signed_txn = self.w3.eth.account.signTransaction(transaction, sender_private_key)
+            tx_hash = self.w3.eth.sendRawTransaction(signed_txn.rawTransaction)
+            receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+            return receipt
+        except Exception as e:
+            logging.error(f"Failed to send transaction {function_name}: {e}")
+            return None
 
 class Blockchain:
     def __init__(self):
